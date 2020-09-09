@@ -12,10 +12,10 @@ namespace InkPlusPlus
 		[SerializeField]
 		public TextAsset InkJsonAsset;
 
-		public readonly string savePath = $"{Application.persistentDataPath}/save.json";
+		private string savePath;
 
 		[SerializeField]
-		[Tooltip("JSON to load as initial state")]
+		[Tooltip("JSON to load as initial state, for debugging")]
 		public TextAsset startState;
 
 		public Story story
@@ -47,26 +47,37 @@ namespace InkPlusPlus
 			set => this.story.state.LoadJson(value);
 		}
 
+		private void Awake()
+		{
+			savePath = $"{Application.persistentDataPath}/save.json";
+		}
+
 		public void Save(string path = null) => File.WriteAllText(path ?? savePath, State);
 
 		public void Load(string path = null) => State = File.ReadAllText(path ?? savePath);
 
+		public void LoadOrCreate(string path = null)
+		{
+			if (File.Exists(path)) Load(path);
+			else Save(path);
+		}
+
 		public void StartStory()
 		{
 			story = new Story(InkJsonAsset.text);
-			if (startState) State = startState.text;
+
+			if (startState == null) LoadOrCreate();
+			else State = startState.text;
+
 			Continue();
 		}
 
 		public void Continue()
 		{
-			string text = story.Continue().Trim();
-			storyUpdate?.Invoke(new StoryUpdate(
-				text,
-				story.currentChoices.Select(c => c.text).ToList<string>(),
-				ProcessTags(story.currentTags),
-				isAtEnd()
-			));
+			var text = story.Continue().Trim();
+			var tags = ProcessTags(story.currentTags);
+			var choices = story.currentChoices.Select(c => c.text).ToList<string>();
+			storyUpdate?.Invoke(new StoryUpdate(text, choices, tags, isAtEnd()));
 			choiceRequiredToContinue?.Invoke(story.canContinue);
 			if (isAtEnd()) atStoryEnd?.Invoke();
 		}
@@ -81,10 +92,7 @@ namespace InkPlusPlus
 
 		private InkTagProcessor GetOrAddProcessor(string key)
 		{
-			if (tagProcessors == null)
-			{
-				tagProcessors = new List<InkTagProcessor>();
-			}
+			tagProcessors = tagProcessors ?? new List<InkTagProcessor>();
 			var processor = tagProcessors.Find(o => o.key == key);
 			if (processor == null)
 			{
@@ -106,10 +114,9 @@ namespace InkPlusPlus
 				{
 					var key = tag.Split(tagValueSplitter) [0];
 					var value = tag.Split(tagValueSplitter) [1];
-					// Mapping
 					tagMap.Add(key, value);
-					// Action
-					InkTagProcessor inkTagProcessor = tagProcessors?.Find(o => o.key == key);
+					// Trigger Event
+					var inkTagProcessor = tagProcessors?.Find(o => o.key == key);
 					inkTagProcessor?.Invoke(value);
 				}
 			return tagMap;

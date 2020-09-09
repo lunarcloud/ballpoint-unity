@@ -12,11 +12,11 @@ namespace InkPlusPlus
 
         public bool atEnd = false;
 
-        public StoryUpdate(string tx, List<string> ch, Dictionary<string, string> tg, bool end)
+        public StoryUpdate(string text, List<string> choices, Dictionary<string, string> tags, bool end)
         {
-            text = tx;
-            choices = ch;
-            tags = tg;
+            this.text = text;
+            this.choices = choices;
+            this.tags = tags;
             atEnd = end;
         }
     }

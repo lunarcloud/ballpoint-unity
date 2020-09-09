@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace InkPlusPlus.SpeechBubble
 {
-    public class DialogTestSceneStoryManager : MonoBehaviour
+    public class SpeechBubbleManager : MonoBehaviour
     {
 
         [SerializeField]
@@ -41,6 +41,9 @@ namespace InkPlusPlus.SpeechBubble
             speaker?.speechBubble.SetActive(true);
             speaker?.speechBubble.SetContinueButtonActive(update.choices.Count == 0);
         }
+
+        [ContextMenu("Autodetect Ink Manager")]
+        private void AutodetectInkManager() => ink = FindObjectOfType(typeof(InkManager)) as InkManager;
 
         [ContextMenu("Autodetect All Talkables")]
         private void AutodetectTalkables() => talkables = (FindObjectsOfType(typeof(Talkable)) as Talkable[])?.ToList<Talkable>();
