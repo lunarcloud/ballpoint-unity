@@ -12,7 +12,8 @@ namespace InkPlusPlus.SpeechBubble
         UnityEngine.UI.Button choiceButton;
         public UnityEngine.Events.UnityEvent ContinueClicked;
 
-        private void OnValidate() {
+        private void OnValidate()
+        {
             text = text ?? GetComponent("Body") as UnityEngine.UI.Text;
             choiceButton = choiceButton ?? GetComponent("ContinueBtn") as UnityEngine.UI.Button;
         }

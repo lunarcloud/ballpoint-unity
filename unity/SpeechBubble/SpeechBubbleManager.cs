@@ -18,7 +18,6 @@ namespace InkPlusPlus.SpeechBubble
         [Tooltip("If left unset, will attempt to set to \"None\".")]
         public Talkable speaker;
 
-
         void Start()
         {
             hideAllSpeechBubbles();
@@ -30,7 +29,8 @@ namespace InkPlusPlus.SpeechBubble
 
         private void hideAllSpeechBubbles() => talkables.ForEach(o => o?.speechBubble.SetActive(false));
 
-        private void setSpeaker(string value) {
+        private void setSpeaker(string value)
+        {
             speaker?.speechBubble.SetActive(false);
             speaker = talkables.Find(o => o?.name == value); // yes it can be set to null, aka hidden
         }
