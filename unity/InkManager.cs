@@ -54,9 +54,6 @@ namespace InkWrapper {
 		public UnityEngine.Events.UnityEvent<StoryUpdate> storyUpdate;
 
 		[SerializeField]
-		public UnityEngine.Events.UnityEvent<bool> choiceRequiredToContinue;
-
-		[SerializeField]
 		public UnityEngine.Events.UnityEvent atStoryEnd;
 
 		public string State {
@@ -98,6 +95,7 @@ namespace InkWrapper {
 			variableChangedEvents.ForEach(watcher => watcher.Invoke(story.variablesState[watcher.name]));
 			// Skip the first line if blank (if configured to)
 			if (skipInitialBlankLine && IsBlankLineWithoutChoices()) story.Continue();
+			if (IsAtEnd()) atStoryEnd?.Invoke();
 			// Initial Story Update
 			SendStoryUpdate();
 		}
@@ -108,6 +106,7 @@ namespace InkWrapper {
 				story.Continue();
 			} while (skipBlankLines && IsBlankLineWithoutChoices() && !IsAtEnd());
 
+			if (IsAtEnd()) atStoryEnd?.Invoke();
 			SendStoryUpdate();
 		}
 		private void SendStoryUpdate() {
@@ -115,8 +114,6 @@ namespace InkWrapper {
 			var tags = ProcessTags(story.currentTags);
 			var choices = story.currentChoices.Select(c => c.text).ToList<string>();
 			storyUpdate?.Invoke(new StoryUpdate(text, choices, tags, IsAtEnd()));
-			choiceRequiredToContinue?.Invoke(story.canContinue);
-			if (IsAtEnd()) atStoryEnd?.Invoke();
 		}
 
 		public void Continue(int choiceIndex) {
@@ -125,9 +122,9 @@ namespace InkWrapper {
 		}
 
 		private bool IsBlankLineWithoutChoices() => story.currentText.Trim() == string.Empty && story.currentChoices.Count == 0;
-		
+
 		public bool IsAtEnd() => this.story.currentChoices.Count == 0 && !this.story.canContinue;
-		
+
 		public Dictionary<string, string> ProcessTags(List<string> tags) {
 			var tagMap = new Dictionary<string, string>();
 			if (tags != null)
