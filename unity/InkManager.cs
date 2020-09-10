@@ -19,11 +19,12 @@ namespace InkWrapper {
 		}
 
 		[SerializeField]
-		[Tooltip("JSON to load as initial state, for debugging")]
+		[Tooltip("Save File to load at start, for debugging.")]
 		[ContextMenuItem("Reset to this state", "LoadStartState")]
 		public TextAsset debugState;
 
 		[SerializeField]
+		[Tooltip("Unless debug state is set.")]
 		public bool loadSaveFileOnStart = false;
 
 		[Header("Blank Lines")]
