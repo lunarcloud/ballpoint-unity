@@ -125,7 +125,9 @@ namespace InkWrapper {
 		}
 
 		private bool IsBlankLineWithoutChoices() => story.currentText.Trim() == string.Empty && story.currentChoices.Count == 0;
+		
 		public bool IsAtEnd() => this.story.currentChoices.Count == 0 && !this.story.canContinue;
+		
 		public Dictionary<string, string> ProcessTags(List<string> tags) {
 			var tagMap = new Dictionary<string, string>();
 			if (tags != null)
