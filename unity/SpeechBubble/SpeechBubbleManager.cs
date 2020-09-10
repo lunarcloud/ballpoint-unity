@@ -20,29 +20,30 @@ namespace InkPlusPlus.SpeechBubble
         [Tooltip("If left unset, will attempt to set to \"None\".")]
         public Talkable speaker;
 
-        private void Awake()
+        private void OnValidate()
         {
-            ink = GetComponent<InkManager>();
+            ink = ink ?? GetComponent<InkManager>();
+            ink.AddTagListener("speaker", SetSpeaker);
+            ink.storyUpdate.AddListener(StoryUpdate);
         }
 
         void Start()
         {
-            hideAllSpeechBubbles();
-            ink.storyUpdate.AddListener(storyUpdate);
-            ink.AddTagListener("speaker", setSpeaker);
-            setSpeaker(speaker?.name ?? "None");
+            HideAllSpeechBubbles();
+            OnValidate(); // just in case these were blown away
+            SetSpeaker(speaker?.name ?? "None");
             ink.StartStory();
         }
 
-        private void hideAllSpeechBubbles() => talkables.ForEach(o => o?.speechBubble.SetActive(false));
+        private void HideAllSpeechBubbles() => talkables.ForEach(o => o?.speechBubble.SetActive(false));
 
-        private void setSpeaker(string value)
+        private void SetSpeaker(string value)
         {
             speaker?.speechBubble.SetActive(false);
             speaker = talkables.Find(o => o?.name == value); // yes it can be set to null, aka hidden
         }
 
-        private void storyUpdate(InkPlusPlus.StoryUpdate update)
+        private void StoryUpdate(InkPlusPlus.StoryUpdate update)
         {
             speaker?.speechBubble.SetText(update.text);
             speaker?.speechBubble.SetActive(true);

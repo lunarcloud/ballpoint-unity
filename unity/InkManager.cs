@@ -37,7 +37,10 @@ namespace InkPlusPlus
 		public char tagValueSplitter = ':';
 
 		[SerializeField]
-		public List<InkTagProcessor> tagProcessors = new List<InkTagProcessor>();
+		public List<ValueChangeWatcher<string>> tagEvents = new List<ValueChangeWatcher<string>>();
+
+		[SerializeField]
+		public List<ValueChangeWatcher<object>> variableEvents = new List<ValueChangeWatcher<object>>();
 
 		[Header("Story Events")]
 		[SerializeField]
@@ -75,6 +78,8 @@ namespace InkPlusPlus
 		{
 			story = new Story(InkJsonAsset.text);
 
+			variableEvents.ForEach(watcher => story.ObserveVariable(watcher.name, (_name, newValue) => watcher.Invoke(newValue)));
+
 			if (startState == null) LoadOrCreate();
 			else LoadStartState();
 
@@ -100,23 +105,6 @@ namespace InkPlusPlus
 		}
 
 		public bool isAtEnd() => this.story.currentChoices.Count == 0 && !this.story.canContinue;
-
-		private InkTagProcessor GetOrAddProcessor(string key)
-		{
-			tagProcessors = tagProcessors ?? new List<InkTagProcessor>();
-			var processor = tagProcessors.Find(o => o.key == key);
-			if (processor == null)
-			{
-				processor = new InkTagProcessor(key);
-				tagProcessors.Add(processor);
-			}
-			return processor;
-		}
-
-		public void AddTagListener(string key, UnityEngine.Events.UnityAction<string> call) => GetOrAddProcessor(key).handler.AddListener(call);
-
-		public void RemoveTagListener(string key, UnityEngine.Events.UnityAction<string> call) => GetOrAddProcessor(key).handler.RemoveListener(call);
-
 		public Dictionary<string, string> ProcessTags(List<string> tags)
 		{
 			var tagMap = new Dictionary<string, string>();
@@ -127,10 +115,48 @@ namespace InkPlusPlus
 					var value = tag.Split(tagValueSplitter) [1];
 					tagMap.Add(key, value);
 					// Trigger Event
-					var inkTagProcessor = tagProcessors?.Find(o => o.key == key);
+					var inkTagProcessor = tagEvents?.Find(o => o.name == key);
 					inkTagProcessor?.Invoke(value);
 				}
 			return tagMap;
 		}
+
+		// Tag Event functions
+		private ValueChangeWatcher<string> GetOrAddTagEvent(string name)
+		{
+			tagEvents = tagEvents ?? new List<ValueChangeWatcher<string>>();
+			var watcher = tagEvents.Find(o => o.name == name);
+			if (watcher == null)
+			{
+				watcher = new ValueChangeWatcher<string>(name);
+				tagEvents.Add(watcher);
+			}
+			return watcher;
+		}
+
+		public void AddTagListener(string key, UnityEngine.Events.UnityAction<string> call) => GetOrAddTagEvent(key).changed.AddListener(call);
+
+		public void RemoveTagListener(string key, UnityEngine.Events.UnityAction<string> call) => GetOrAddTagEvent(key).changed.RemoveListener(call);
+
+		// Variable Event functions
+		private ValueChangeWatcher<object> GetOrAddVariableEvent(string name)
+		{
+			variableEvents = variableEvents ?? new List<ValueChangeWatcher<object>>();
+			var watcher = variableEvents.Find(o => o.name == name);
+			if (watcher == null)
+			{
+				watcher = new ValueChangeWatcher<object>(name);
+				variableEvents.Add(watcher);
+				// Setup actual watcher with ink
+				story.ObserveVariable(name, (_name, newValue) => watcher.Invoke(newValue));
+				watcher.Invoke(story.variablesState[name]); // send initial value
+			}
+			return watcher;
+		}
+
+		public void AddVariableListener(string key, UnityEngine.Events.UnityAction<object> call) => GetOrAddVariableEvent(key).changed.AddListener(call);
+
+		public void RemoveVariableListener(string key, UnityEngine.Events.UnityAction<object> call) => GetOrAddVariableEvent(key).changed.RemoveListener(call);
+
 	}
 }
