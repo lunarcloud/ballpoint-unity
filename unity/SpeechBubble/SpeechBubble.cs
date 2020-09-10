@@ -1,12 +1,10 @@
 ﻿using UnityEngine;
 
-namespace InkPlusPlus.SpeechBubble
-{
+namespace InkWrapper.SpeechBubble {
 
     [DisallowMultipleComponent]
     [HelpURL("https://github.com/lunarcloud/InkWrapper")]
-    public class SpeechBubble : MonoBehaviour
-    {
+    public class SpeechBubble : MonoBehaviour {
 
         [SerializeField]
         UnityEngine.UI.Text text;
@@ -17,10 +15,9 @@ namespace InkPlusPlus.SpeechBubble
         [SerializeField]
         public UnityEngine.Events.UnityEvent ContinueClicked;
 
-        private void OnValidate()
-        {
-            text = text ?? GetComponent("Body") as UnityEngine.UI.Text;
-            choiceButton = choiceButton ?? GetComponent("ContinueBtn") as UnityEngine.UI.Button;
+        private void OnValidate() {
+            text = text ?? GetComponent("Body")as UnityEngine.UI.Text;
+            choiceButton = choiceButton ?? GetComponent("ContinueBtn")as UnityEngine.UI.Button;
         }
 
         public void Continue() => ContinueClicked.Invoke();

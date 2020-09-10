@@ -4,19 +4,16 @@ using System.Linq;
 using Ink.Runtime;
 using UnityEngine;
 
-namespace InkPlusPlus
-{
+namespace InkWrapper {
 	[DisallowMultipleComponent]
 	[HelpURL("https://github.com/lunarcloud/InkWrapper")]
-	public class InkManager : MonoBehaviour
-	{
+	public class InkManager : MonoBehaviour {
 
 		[SerializeField]
 		public TextAsset InkJsonAsset;
 
 		[HideInInspector]
-		public string standardSavePath
-		{
+		public string standardSavePath {
 			get;
 			private set;
 		}
@@ -24,10 +21,19 @@ namespace InkPlusPlus
 		[SerializeField]
 		[Tooltip("JSON to load as initial state, for debugging")]
 		[ContextMenuItem("Reset to this state", "LoadStartState")]
-		public TextAsset startState;
+		public TextAsset debugState;
 
-		public Story story
-		{
+		[SerializeField]
+		public bool loadSaveFileOnStart = false;
+
+		[Header("Blank Lines")]
+
+		public bool skipInitialBlankLine = true;
+
+		[Tooltip("Not including empty text with choices")]
+		public bool skipBlankLines = true;
+
+		public Story story {
 			get;
 			private set;
 		}
@@ -53,65 +59,79 @@ namespace InkPlusPlus
 		[SerializeField]
 		public UnityEngine.Events.UnityEvent atStoryEnd;
 
-		public string State
-		{
+		public string State {
 			get => this.story.state.ToJson();
 			set => this.story.state.LoadJson(value);
 		}
 
-		private void Awake()
-		{
+		private void Awake() {
 			// Application.persistentDataPath is not available at compile-time, must assign this here
 			standardSavePath = $"{Application.persistentDataPath}/save.json";
 		}
 
-		public void Save(string path = null) => File.WriteAllText(path ?? standardSavePath, State);
+		private string pathOrStandardSavePath(string path) => string.IsNullOrEmpty(path) ? standardSavePath : path;
 
-		public void Load(string path = null) => State = File.ReadAllText(path ?? standardSavePath);
+		public void Save(string path = null) => File.WriteAllText(pathOrStandardSavePath(path), State);
 
-		public void LoadOrCreate(string path = null)
-		{
-			if (File.Exists(path)) Load(path);
-			else Save(path);
+		public void Load(string path = null) => State = File.ReadAllText(pathOrStandardSavePath(path));
+
+		public bool TryLoad(string path = null) {
+			if (!File.Exists(pathOrStandardSavePath(path)))return false;
+
+			Load(path);
+			return true;
 		}
 
-		public void Initialize()
-		{
+		public void Initialize() {
 			story = new Story(InkJsonAsset.text);
-
 			variableChangedEvents.ForEach(watcher => story.ObserveVariable(watcher.name, (_name, newValue) => watcher.Invoke(newValue)));
 
-			if (startState == null) LoadOrCreate();
-			else LoadStartState();
+			// Load a state or standard save (if configured to)
+			if (debugState != null)LoadDebugState();
+			else if (loadSaveFileOnStart)TryLoad();
 		}
 
-		public void LoadStartState() => State = startState.text;
+		public void LoadDebugState() => State = debugState.text;
 
-		public void Continue()
-		{
-			var text = story.Continue().Trim();
+		public void BeginStory() {
+			// Send out Variable initial values
+			variableChangedEvents.ForEach(watcher => watcher.Invoke(story.variablesState[watcher.name]));
+			// Skip the first line if blank (if configured to)
+			if (skipInitialBlankLine && IsBlankLineWithoutChoices())story.Continue();
+			// Initial Story Update
+			SendStoryUpdate();
+		}
+
+		public void Continue() {
+			// Continue at least once
+			do {
+				story.Continue();
+			} while (skipBlankLines && IsBlankLineWithoutChoices() && !IsAtEnd());
+
+			SendStoryUpdate();
+		}
+		private void SendStoryUpdate() {
+			var text = story.currentText.Trim();
 			var tags = ProcessTags(story.currentTags);
 			var choices = story.currentChoices.Select(c => c.text).ToList<string>();
-			storyUpdate?.Invoke(new StoryUpdate(text, choices, tags, isAtEnd()));
+			storyUpdate?.Invoke(new StoryUpdate(text, choices, tags, IsAtEnd()));
 			choiceRequiredToContinue?.Invoke(story.canContinue);
-			if (isAtEnd()) atStoryEnd?.Invoke();
+			if (IsAtEnd())atStoryEnd?.Invoke();
 		}
 
-		public void Continue(int choiceIndex)
-		{
+		public void Continue(int choiceIndex) {
 			story.ChooseChoiceIndex(choiceIndex);
 			Continue();
 		}
 
-		public bool isAtEnd() => this.story.currentChoices.Count == 0 && !this.story.canContinue;
-		public Dictionary<string, string> ProcessTags(List<string> tags)
-		{
+		private bool IsBlankLineWithoutChoices() => story.currentText.Trim() == string.Empty && story.currentChoices.Count == 0;
+		public bool IsAtEnd() => this.story.currentChoices.Count == 0 && !this.story.canContinue;
+		public Dictionary<string, string> ProcessTags(List<string> tags) {
 			var tagMap = new Dictionary<string, string>();
 			if (tags != null)
-				foreach (string tag in tags)
-				{
-					var key = tag.Split(tagValueSplitter) [0];
-					var value = tag.Split(tagValueSplitter) [1];
+				foreach (string tag in tags) {
+					var key = tag.Split(tagValueSplitter)[0];
+					var value = tag.Split(tagValueSplitter)[1];
 					tagMap.Add(key, value);
 					// Trigger Event
 					var inkTagProcessor = tagEvents?.Find(o => o.name == key);
@@ -121,12 +141,10 @@ namespace InkPlusPlus
 		}
 
 		// Tag Event functions
-		internal ValueChangeWatcher<string> GetOrAddTagEvent(string name)
-		{
+		internal ValueChangeWatcher<string> GetOrAddTagEvent(string name) {
 			tagEvents = tagEvents ?? new List<ValueChangeWatcher<string>>();
 			var watcher = tagEvents.Find(o => o.name == name);
-			if (watcher == null)
-			{
+			if (watcher == null) {
 				watcher = new ValueChangeWatcher<string>(name);
 				tagEvents.Add(watcher);
 			}
@@ -138,12 +156,10 @@ namespace InkPlusPlus
 		public void RemoveTagListener(string key, UnityEngine.Events.UnityAction<string> call) => GetOrAddTagEvent(key).changed.RemoveListener(call);
 
 		// Variable Event functions
-		internal ValueChangeWatcher<object> GetOrAddVariableEvent(string name)
-		{
+		internal ValueChangeWatcher<object> GetOrAddVariableEvent(string name) {
 			variableChangedEvents = variableChangedEvents ?? new List<ValueChangeWatcher<object>>();
 			var watcher = variableChangedEvents.Find(o => o.name == name);
-			if (watcher == null)
-			{
+			if (watcher == null) {
 				watcher = new ValueChangeWatcher<object>(name);
 				variableChangedEvents.Add(watcher);
 				// Setup actual watcher with ink

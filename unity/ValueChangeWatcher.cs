@@ -1,8 +1,6 @@
-namespace InkPlusPlus
-{
+namespace InkWrapper {
     [System.Serializable]
-    public class ValueChangeWatcher<T>
-    {
+    public class ValueChangeWatcher<T> {
         public string name;
 
         public UnityEngine.Events.UnityEvent<T> changed = new UnityEngine.Events.UnityEvent<T>();
