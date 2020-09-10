@@ -75,7 +75,7 @@ namespace InkPlusPlus
 			else Save(path);
 		}
 
-		public void StartStory()
+		public void Initialize()
 		{
 			story = new Story(InkJsonAsset.text);
 
@@ -83,8 +83,6 @@ namespace InkPlusPlus
 
 			if (startState == null) LoadOrCreate();
 			else LoadStartState();
-
-			Continue();
 		}
 
 		public void LoadStartState() => State = startState.text;
@@ -123,7 +121,7 @@ namespace InkPlusPlus
 		}
 
 		// Tag Event functions
-		private ValueChangeWatcher<string> GetOrAddTagEvent(string name)
+		internal ValueChangeWatcher<string> GetOrAddTagEvent(string name)
 		{
 			tagEvents = tagEvents ?? new List<ValueChangeWatcher<string>>();
 			var watcher = tagEvents.Find(o => o.name == name);
@@ -140,7 +138,7 @@ namespace InkPlusPlus
 		public void RemoveTagListener(string key, UnityEngine.Events.UnityAction<string> call) => GetOrAddTagEvent(key).changed.RemoveListener(call);
 
 		// Variable Event functions
-		private ValueChangeWatcher<object> GetOrAddVariableEvent(string name)
+		internal ValueChangeWatcher<object> GetOrAddVariableEvent(string name)
 		{
 			variableChangedEvents = variableChangedEvents ?? new List<ValueChangeWatcher<object>>();
 			var watcher = variableChangedEvents.Find(o => o.name == name);
