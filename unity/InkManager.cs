@@ -6,16 +6,24 @@ using UnityEngine;
 
 namespace InkPlusPlus
 {
+	[DisallowMultipleComponent]
+	[HelpURL("https://github.com/lunarcloud/InkWrapper")]
 	public class InkManager : MonoBehaviour
 	{
 
 		[SerializeField]
 		public TextAsset InkJsonAsset;
 
-		private string savePath;
+		[HideInInspector]
+		public string standardSavePath
+		{
+			get;
+			private set;
+		}
 
 		[SerializeField]
 		[Tooltip("JSON to load as initial state, for debugging")]
+        [ContextMenuItem("Reset to this state", "LoadStartState")]
 		public TextAsset startState;
 
 		public Story story
@@ -49,12 +57,13 @@ namespace InkPlusPlus
 
 		private void Awake()
 		{
-			savePath = $"{Application.persistentDataPath}/save.json";
+			// Application.persistentDataPath is not available at compile-time, must assign this here
+			standardSavePath = $"{Application.persistentDataPath}/save.json";
 		}
 
-		public void Save(string path = null) => File.WriteAllText(path ?? savePath, State);
+		public void Save(string path = null) => File.WriteAllText(path ?? standardSavePath, State);
 
-		public void Load(string path = null) => State = File.ReadAllText(path ?? savePath);
+		public void Load(string path = null) => State = File.ReadAllText(path ?? standardSavePath);
 
 		public void LoadOrCreate(string path = null)
 		{
@@ -67,12 +76,14 @@ namespace InkPlusPlus
 			story = new Story(InkJsonAsset.text);
 
 			if (startState == null) LoadOrCreate();
-			else State = startState.text;
+			else LoadStartState();
 
 			Continue();
 		}
 
-		public void Continue()
+        public void LoadStartState() => State = startState.text;
+
+        public void Continue()
 		{
 			var text = story.Continue().Trim();
 			var tags = ProcessTags(story.currentTags);

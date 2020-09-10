@@ -4,14 +4,18 @@ using UnityEngine;
 
 namespace InkPlusPlus.SpeechBubble
 {
+
+    [DisallowMultipleComponent]
+    [HelpURL("https://github.com/lunarcloud/InkWrapper")]
     public class SpeechBubbleManager : MonoBehaviour
     {
 
         [SerializeField]
+        [ContextMenuItem("Auto Detect", "AutodetectInkManager")]
         public InkManager ink;
 
-        [ContextMenuItem("Auto Detect All", "AutodetectTalkables")]
         [SerializeField]
+        [ContextMenuItem("Auto Detect All", "AutodetectTalkables")]
         public List<Talkable> talkables = new List<Talkable>();
 
         [SerializeField]

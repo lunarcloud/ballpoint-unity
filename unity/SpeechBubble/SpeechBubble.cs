@@ -2,6 +2,9 @@
 
 namespace InkPlusPlus.SpeechBubble
 {
+
+    [DisallowMultipleComponent]
+    [HelpURL("https://github.com/lunarcloud/InkWrapper")]
     public class SpeechBubble : MonoBehaviour
     {
 
@@ -10,6 +13,8 @@ namespace InkPlusPlus.SpeechBubble
 
         [SerializeField]
         UnityEngine.UI.Button choiceButton;
+
+        [SerializeField]
         public UnityEngine.Events.UnityEvent ContinueClicked;
 
         private void OnValidate()
