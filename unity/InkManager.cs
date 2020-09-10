@@ -23,7 +23,7 @@ namespace InkPlusPlus
 
 		[SerializeField]
 		[Tooltip("JSON to load as initial state, for debugging")]
-        [ContextMenuItem("Reset to this state", "LoadStartState")]
+		[ContextMenuItem("Reset to this state", "LoadStartState")]
 		public TextAsset startState;
 
 		public Story story
@@ -81,9 +81,9 @@ namespace InkPlusPlus
 			Continue();
 		}
 
-        public void LoadStartState() => State = startState.text;
+		public void LoadStartState() => State = startState.text;
 
-        public void Continue()
+		public void Continue()
 		{
 			var text = story.Continue().Trim();
 			var tags = ProcessTags(story.currentTags);

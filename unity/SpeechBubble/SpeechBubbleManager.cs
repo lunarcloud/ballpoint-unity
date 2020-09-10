@@ -5,14 +5,12 @@ using UnityEngine;
 namespace InkPlusPlus.SpeechBubble
 {
 
+    [RequireComponent(typeof(InkManager))]
     [DisallowMultipleComponent]
     [HelpURL("https://github.com/lunarcloud/InkWrapper")]
     public class SpeechBubbleManager : MonoBehaviour
     {
-
-        [SerializeField]
-        [ContextMenuItem("Auto Detect", "AutodetectInkManager")]
-        public InkManager ink;
+        private InkManager ink;
 
         [SerializeField]
         [ContextMenuItem("Auto Detect All", "AutodetectTalkables")]
@@ -21,6 +19,11 @@ namespace InkPlusPlus.SpeechBubble
         [SerializeField]
         [Tooltip("If left unset, will attempt to set to \"None\".")]
         public Talkable speaker;
+
+        private void Awake()
+        {
+            ink = GetComponent<InkManager>();
+        }
 
         void Start()
         {
@@ -45,9 +48,6 @@ namespace InkPlusPlus.SpeechBubble
             speaker?.speechBubble.SetActive(true);
             speaker?.speechBubble.SetContinueButtonActive(update.choices.Count == 0);
         }
-
-        [ContextMenu("Autodetect Ink Manager")]
-        private void AutodetectInkManager() => ink = FindObjectOfType(typeof(InkManager)) as InkManager;
 
         [ContextMenu("Autodetect All Talkables")]
         private void AutodetectTalkables() => talkables = (FindObjectsOfType(typeof(Talkable)) as Talkable[])?.ToList<Talkable>();
