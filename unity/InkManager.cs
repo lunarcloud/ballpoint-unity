@@ -39,8 +39,9 @@ namespace InkPlusPlus
 		[SerializeField]
 		public List<ValueChangeWatcher<string>> tagEvents = new List<ValueChangeWatcher<string>>();
 
+		[Header("Variable Observers")]
 		[SerializeField]
-		public List<ValueChangeWatcher<object>> variableEvents = new List<ValueChangeWatcher<object>>();
+		public List<ValueChangeWatcher<object>> variableChangedEvents = new List<ValueChangeWatcher<object>>();
 
 		[Header("Story Events")]
 		[SerializeField]
@@ -78,7 +79,7 @@ namespace InkPlusPlus
 		{
 			story = new Story(InkJsonAsset.text);
 
-			variableEvents.ForEach(watcher => story.ObserveVariable(watcher.name, (_name, newValue) => watcher.Invoke(newValue)));
+			variableChangedEvents.ForEach(watcher => story.ObserveVariable(watcher.name, (_name, newValue) => watcher.Invoke(newValue)));
 
 			if (startState == null) LoadOrCreate();
 			else LoadStartState();
@@ -141,12 +142,12 @@ namespace InkPlusPlus
 		// Variable Event functions
 		private ValueChangeWatcher<object> GetOrAddVariableEvent(string name)
 		{
-			variableEvents = variableEvents ?? new List<ValueChangeWatcher<object>>();
-			var watcher = variableEvents.Find(o => o.name == name);
+			variableChangedEvents = variableChangedEvents ?? new List<ValueChangeWatcher<object>>();
+			var watcher = variableChangedEvents.Find(o => o.name == name);
 			if (watcher == null)
 			{
 				watcher = new ValueChangeWatcher<object>(name);
-				variableEvents.Add(watcher);
+				variableChangedEvents.Add(watcher);
 				// Setup actual watcher with ink
 				story.ObserveVariable(name, (_name, newValue) => watcher.Invoke(newValue));
 				watcher.Invoke(story.variablesState[name]); // send initial value
