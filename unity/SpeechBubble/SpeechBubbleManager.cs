@@ -50,6 +50,6 @@ namespace InkWrapper.SpeechBubble {
         }
 
         [ContextMenu("Autodetect All Talkables")]
-        private void AutodetectTalkables() => talkables = (FindObjectsOfType(typeof(Talkable))as Talkable[])?.ToList<Talkable>();
+        private void AutodetectTalkables() => talkables = (FindObjectsOfType(typeof(Talkable)) as Talkable[])?.ToList<Talkable>();
     }
 }

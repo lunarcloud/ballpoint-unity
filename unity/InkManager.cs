@@ -76,7 +76,7 @@ namespace InkWrapper {
 		public void Load(string path = null) => State = File.ReadAllText(pathOrStandardSavePath(path));
 
 		public bool TryLoad(string path = null) {
-			if (!File.Exists(pathOrStandardSavePath(path)))return false;
+			if (!File.Exists(pathOrStandardSavePath(path))) return false;
 
 			Load(path);
 			return true;
@@ -87,8 +87,8 @@ namespace InkWrapper {
 			variableChangedEvents.ForEach(watcher => story.ObserveVariable(watcher.name, (_name, newValue) => watcher.Invoke(newValue)));
 
 			// Load a state or standard save (if configured to)
-			if (debugState != null)LoadDebugState();
-			else if (loadSaveFileOnStart)TryLoad();
+			if (debugState != null) LoadDebugState();
+			else if (loadSaveFileOnStart) TryLoad();
 		}
 
 		public void LoadDebugState() => State = debugState.text;
@@ -97,7 +97,7 @@ namespace InkWrapper {
 			// Send out Variable initial values
 			variableChangedEvents.ForEach(watcher => watcher.Invoke(story.variablesState[watcher.name]));
 			// Skip the first line if blank (if configured to)
-			if (skipInitialBlankLine && IsBlankLineWithoutChoices())story.Continue();
+			if (skipInitialBlankLine && IsBlankLineWithoutChoices()) story.Continue();
 			// Initial Story Update
 			SendStoryUpdate();
 		}
@@ -116,7 +116,7 @@ namespace InkWrapper {
 			var choices = story.currentChoices.Select(c => c.text).ToList<string>();
 			storyUpdate?.Invoke(new StoryUpdate(text, choices, tags, IsAtEnd()));
 			choiceRequiredToContinue?.Invoke(story.canContinue);
-			if (IsAtEnd())atStoryEnd?.Invoke();
+			if (IsAtEnd()) atStoryEnd?.Invoke();
 		}
 
 		public void Continue(int choiceIndex) {
@@ -130,8 +130,8 @@ namespace InkWrapper {
 			var tagMap = new Dictionary<string, string>();
 			if (tags != null)
 				foreach (string tag in tags) {
-					var key = tag.Split(tagValueSplitter)[0];
-					var value = tag.Split(tagValueSplitter)[1];
+					var key = tag.Split(tagValueSplitter) [0];
+					var value = tag.Split(tagValueSplitter) [1];
 					tagMap.Add(key, value);
 					// Trigger Event
 					var inkTagProcessor = tagEvents?.Find(o => o.name == key);

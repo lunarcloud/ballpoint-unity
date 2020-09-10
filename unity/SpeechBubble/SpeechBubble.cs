@@ -16,8 +16,8 @@ namespace InkWrapper.SpeechBubble {
         public UnityEngine.Events.UnityEvent ContinueClicked;
 
         private void OnValidate() {
-            text = text ?? GetComponent("Body")as UnityEngine.UI.Text;
-            choiceButton = choiceButton ?? GetComponent("ContinueBtn")as UnityEngine.UI.Button;
+            text = text ?? GetComponent("Body") as UnityEngine.UI.Text;
+            choiceButton = choiceButton ?? GetComponent("ContinueBtn") as UnityEngine.UI.Button;
         }
 
         public void Continue() => ContinueClicked.Invoke();
