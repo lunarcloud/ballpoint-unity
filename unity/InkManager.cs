@@ -55,7 +55,7 @@ namespace InkWrapper {
 		public UnityEngine.Events.UnityEvent<StoryUpdate> storyUpdate;
 
 		[SerializeField]
-		public UnityEngine.Events.UnityEvent atStoryEnd;
+		public UnityEngine.Events.UnityEvent StoryEnded;
 
 		public string State {
 			get => this.story.state.ToJson();
@@ -96,18 +96,21 @@ namespace InkWrapper {
 			variableChangedEvents.ForEach(watcher => watcher.Invoke(story.variablesState[watcher.name]));
 			// Skip the first line if blank (if configured to)
 			if (skipInitialBlankLine && IsBlankLineWithoutChoices()) story.Continue();
-			if (IsAtEnd()) atStoryEnd?.Invoke();
+			if (IsAtEnd()) StoryEnded?.Invoke();
 			// Initial Story Update
 			SendStoryUpdate();
 		}
 
 		public void Continue() {
+			if (IsAtEnd()) {
+				StoryEnded?.Invoke();
+				return;
+			}
 			// Continue at least once
-			do {
+			if (story.canContinue) story.Continue();
+			while (skipBlankLines && IsBlankLineWithoutChoices() && !IsAtEnd()) {
 				story.Continue();
-			} while (skipBlankLines && IsBlankLineWithoutChoices() && !IsAtEnd());
-
-			if (IsAtEnd()) atStoryEnd?.Invoke();
+			}
 			SendStoryUpdate();
 		}
 		private void SendStoryUpdate() {

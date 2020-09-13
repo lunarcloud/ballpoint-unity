@@ -20,19 +20,20 @@ namespace InkWrapper.SpeechBubble {
 
         private void OnValidate() {
             ink = ink ?? GetComponent<InkManager>();
-            ink.GetOrAddTagEvent("speaker"); // Make sure it shows up in the inspector
+            ink.GetOrAddTagEvent("speaker"); // Make sure it shows up in the inspector 
         }
 
         void Start() {
             HideAllSpeechBubbles();
             ink.AddTagListener("speaker", SetSpeaker);
             ink.storyUpdate.AddListener(StoryUpdate);
+            ink.StoryEnded.AddListener(HideAllSpeechBubbles);
             ink.Initialize();
             SetSpeaker(speaker?.name ?? ink.story.variablesState["lastKnownSpeaker"] as string ?? "None");
             ink.BeginStory();
         }
 
-        private void HideAllSpeechBubbles() => talkables.ForEach(o => o?.speechBubble.SetActive(false));
+        private void HideAllSpeechBubbles() => talkables?.ForEach(o => o?.speechBubble.SetActive(false));
 
         private void SetSpeaker(string value) {
             //Debug.Log($"speaker is {value}");
@@ -42,12 +43,7 @@ namespace InkWrapper.SpeechBubble {
             ink.story.variablesState["lastKnownSpeaker"] = value;
         }
 
-        private void StoryUpdate(InkWrapper.StoryUpdate update) {
-            speaker?.speechBubble.SetActive(false);
-            speaker?.speechBubble.SetText(update.text);
-            speaker?.speechBubble.SetContinueButtonActive(update.choices.Count == 0);
-            speaker?.speechBubble.SetActive(true);
-        }
+        private void StoryUpdate(InkWrapper.StoryUpdate update) => speaker?.speechBubble.StoryUpdate(update);
 
         [ContextMenu("Autodetect All Talkables")]
         private void AutodetectTalkables() => talkables = (FindObjectsOfType(typeof(Talkable)) as Talkable[])?.ToList<Talkable>();
