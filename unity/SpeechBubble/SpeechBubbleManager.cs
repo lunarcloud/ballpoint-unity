@@ -27,7 +27,7 @@ namespace InkWrapper.SpeechBubble {
             HideAllSpeechBubbles();
             ink.AddTagListener("speaker", SetSpeaker);
             ink.storyUpdate.AddListener(StoryUpdate);
-            ink.StoryEnded.AddListener(HideAllSpeechBubbles);
+            ink.storyEnded.AddListener(HideAllSpeechBubbles);
             ink.Initialize();
             SetSpeaker(speaker?.name ?? ink.story.variablesState["lastKnownSpeaker"] as string ?? "None");
             ink.BeginStory();
