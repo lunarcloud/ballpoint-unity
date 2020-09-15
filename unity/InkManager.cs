@@ -11,12 +11,18 @@ namespace InkWrapper {
 
 		[SerializeField]
 		public TextAsset InkJsonAsset;
+		public Story story {
+			get;
+			private set;
+		}
 
 		[HideInInspector]
 		public string standardSavePath {
 			get;
 			private set;
 		}
+
+		[Header("Start-Up")]
 
 		[SerializeField]
 		[Tooltip("Save File to load at start, for debugging.")]
@@ -27,17 +33,18 @@ namespace InkWrapper {
 		[Tooltip("Unless debug state is set.")]
 		public bool loadSaveFileOnStart = false;
 
-		[Header("Blank Lines")]
-
 		public bool skipInitialBlankLine = true;
+
+		[Header("Processing")]
 
 		[Tooltip("Not including empty text with choices")]
 		public bool skipBlankLines = true;
 
-		public Story story {
-			get;
-			private set;
-		}
+		[SerializeField]
+		public UnityEngine.Events.UnityEvent<StoryUpdate> storyUpdate;
+
+		[SerializeField]
+		public UnityEngine.Events.UnityEvent storyEnded;
 
 		[Header("Tags Handling")]
 		[SerializeField]
@@ -46,16 +53,13 @@ namespace InkWrapper {
 		[SerializeField]
 		public List<ValueChangeWatcher<string>> tagEvents = new List<ValueChangeWatcher<string>>();
 
-		[Header("Variable Observers")]
+		[Header("Variable Observation")]
+
+		[Tooltip("Run ToString on InkList values in Variable Updates")]
+		public bool flattenListVariables = false;
+
 		[SerializeField]
 		public List<ValueChangeWatcher<object>> variableChangedEvents = new List<ValueChangeWatcher<object>>();
-
-		[Header("Story Events")]
-		[SerializeField]
-		public UnityEngine.Events.UnityEvent<StoryUpdate> storyUpdate;
-
-		[SerializeField]
-		public UnityEngine.Events.UnityEvent storyEnded;
 
 		public string State {
 			get => this.story.state.ToJson();
@@ -82,7 +86,7 @@ namespace InkWrapper {
 
 		public void Initialize() {
 			story = new Story(InkJsonAsset.text);
-			variableChangedEvents.ForEach(watcher => story.ObserveVariable(watcher.name, (_name, newValue) => watcher.Invoke(newValue)));
+			variableChangedEvents.ForEach(watcher => story.ObserveVariable(watcher.name, (k, v) => SendVariableUpdate(watcher, v)));
 
 			// Load a state or standard save (if configured to)
 			if (debugState != null) LoadDebugState();
@@ -133,8 +137,9 @@ namespace InkWrapper {
 			var tagMap = new Dictionary<string, string>();
 			if (tags != null)
 				foreach (string tag in tags) {
-					var key = tag.Split(tagValueSplitter) [0];
-					var value = tag.Split(tagValueSplitter) [1];
+					var split = tag.Split(tagValueSplitter);
+					var key = split.Length > 0 ? split[0] : tag;
+					var value = split.Length > 1 ? split[1] : key;
 					tagMap.Add(key, value);
 					// Trigger Event
 					var inkTagProcessor = tagEvents?.Find(o => o.name == key);
@@ -166,10 +171,17 @@ namespace InkWrapper {
 				watcher = new ValueChangeWatcher<object>(name);
 				variableChangedEvents.Add(watcher);
 				// Setup actual watcher with ink
-				story.ObserveVariable(name, (_name, newValue) => watcher.Invoke(newValue));
-				watcher.Invoke(story.variablesState[name]); // send initial value
+				story.ObserveVariable(name, (k, v) => SendVariableUpdate(watcher, v));
+				SendVariableUpdate(watcher, story.variablesState[name]); // send initial value
 			}
 			return watcher;
+		}
+
+		private void SendVariableUpdate(ValueChangeWatcher<object> watcher, object newValue) {
+			if (newValue != null && flattenListVariables && newValue is InkList) {
+				newValue = ((InkList) newValue).ToString(); // flatten to string
+			}
+			watcher?.Invoke(newValue);
 		}
 
 		public void AddVariableListener(string key, UnityEngine.Events.UnityAction<object> call) => GetOrAddVariableEvent(key).changed.AddListener(call);
