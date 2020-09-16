@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace InkWrapper {
+namespace Ballpoint {
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true)]
 	public class ShowIfAttribute : PropertyAttribute {
 			#region Fields

@@ -2,11 +2,11 @@
 using System.Linq;
 using UnityEngine;
 
-namespace InkWrapper.SpeechBubble {
+namespace Ballpoint.SpeechBubble {
 
     [RequireComponent(typeof(InkManager))]
     [DisallowMultipleComponent]
-    [HelpURL("https://github.com/lunarcloud/InkWrapper")]
+    [HelpURL(InkManager.HelpURL)]
     public class SpeechBubbleManager : MonoBehaviour {
         private InkManager ink;
 
@@ -43,7 +43,7 @@ namespace InkWrapper.SpeechBubble {
             ink.story.variablesState["lastKnownSpeaker"] = value;
         }
 
-        private void StoryUpdate(InkWrapper.StoryUpdate update) => speaker?.speechBubble.StoryUpdate(update);
+        private void StoryUpdate(Ballpoint.StoryUpdate update) => speaker?.speechBubble.StoryUpdate(update);
 
         [ContextMenu("Autodetect All Talkables")]
         private void AutodetectTalkables() => talkables = (FindObjectsOfType(typeof(Talkable)) as Talkable[])?.ToList<Talkable>();

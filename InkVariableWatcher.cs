@@ -3,7 +3,7 @@ using Ink.Runtime;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace InkWrapper {
+namespace Ballpoint {
 
     [System.Flags]
     public enum HandleTypeEnum {

@@ -5,10 +5,13 @@ using Ink.Runtime;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace InkWrapper {
+namespace Ballpoint {
+
 	[DisallowMultipleComponent]
-	[HelpURL("https://github.com/lunarcloud/InkWrapper")]
+	[HelpURL(HelpURL)]
 	public class InkManager : MonoBehaviour {
+
+		public const string HelpURL = "https://github.com/lunarcloud/ballpoint-unity";
 
 		[SerializeField]
 		public TextAsset InkJsonAsset;

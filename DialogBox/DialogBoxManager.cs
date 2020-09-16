@@ -2,11 +2,11 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace InkWrapper.SpeechBubble {
+namespace Ballpoint.SpeechBubble {
 
     [RequireComponent(typeof(InkManager))]
     [DisallowMultipleComponent]
-    [HelpURL("https://github.com/lunarcloud/InkWrapper")]
+    [HelpURL(InkManager.HelpURL)]
     public class DialogBoxManager : MonoBehaviour {
         private InkManager ink;
 
@@ -49,7 +49,7 @@ namespace InkWrapper.SpeechBubble {
 
         }
 
-        private void StoryUpdate(InkWrapper.StoryUpdate update) {
+        private void StoryUpdate(Ballpoint.StoryUpdate update) {
             textDisplay.text = update.text;
             var hasChoices = update.choices.Count > 0;
             choicesParent.SetActive(hasChoices);

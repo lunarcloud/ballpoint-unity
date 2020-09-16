@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 
-namespace InkWrapper.SpeechBubble {
+namespace Ballpoint.SpeechBubble {
 
     [DisallowMultipleComponent]
-    [HelpURL("https://github.com/lunarcloud/InkWrapper")]
+    [HelpURL(InkManager.HelpURL)]
     public class Talkable : MonoBehaviour {
         public SpeechBubble speechBubble;
 

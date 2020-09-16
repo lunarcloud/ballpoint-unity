@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace InkWrapper.SpeechBubble {
+namespace Ballpoint.SpeechBubble {
 
     [DisallowMultipleComponent]
-    [HelpURL("https://github.com/lunarcloud/InkWrapper")]
+    [HelpURL(InkManager.HelpURL)]
     public abstract class SpeechBubble : MonoBehaviour {
 
         [SerializeField]
@@ -31,10 +31,10 @@ namespace InkWrapper.SpeechBubble {
 
         public void Choose(int choiceIndex) => ChoiceChosen?.Invoke(choiceIndex);
 
-        internal void SetText(string value) => text.text = value;
+        public void SetText(string value) => text.text = value;
 
         // This will be different based on how you present choices
-        internal abstract void SetChoices(List<string> choices);
+        public abstract void SetChoices(List<string> choices);
 
         public void StoryUpdate(StoryUpdate update) {
             SetActive(false);

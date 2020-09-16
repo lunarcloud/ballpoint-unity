@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace InkWrapper.SpeechBubble {
+namespace Ballpoint.SpeechBubble {
 
     [DisallowMultipleComponent]
-    [HelpURL("https://github.com/lunarcloud/InkWrapper")]
+    [HelpURL(InkManager.HelpURL)]
     public class SpeechBubbleSansChoices : SpeechBubble {
-        internal override void SetChoices(List<string> choices) {
+        public override void SetChoices(List<string> choices) {
 
         }
     }

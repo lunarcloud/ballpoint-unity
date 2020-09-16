@@ -1,7 +1,7 @@
 using UnityEngine.Events;
 using Ink.Runtime;
 
-namespace InkWrapper {
+namespace Ballpoint {
     [System.Serializable]
     public class TagChangeWatcher {
         public string name;

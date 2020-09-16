@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace InkWrapper {
+namespace Ballpoint {
     [System.Serializable]
     public class StoryUpdate {
         public string text;
