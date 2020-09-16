@@ -20,7 +20,7 @@ namespace InkWrapper.SpeechBubble {
 
         private void OnValidate() {
             ink = ink ?? GetComponent<InkManager>();
-            ink.GetOrAddTagEvent("speaker"); // Make sure it shows up in the inspector 
+            ink.GetOrAddTagChangeWatcher("speaker"); // Make sure it shows up in the inspector 
         }
 
         void Start() {

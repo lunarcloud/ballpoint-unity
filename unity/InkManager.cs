@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Ink.Runtime;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace InkWrapper {
 	[DisallowMultipleComponent]
@@ -41,25 +42,22 @@ namespace InkWrapper {
 		public bool skipBlankLines = true;
 
 		[SerializeField]
-		public UnityEngine.Events.UnityEvent<StoryUpdate> storyUpdate;
+		public UnityEvent<StoryUpdate> storyUpdate;
 
 		[SerializeField]
-		public UnityEngine.Events.UnityEvent storyEnded;
+		public UnityEvent storyEnded;
 
 		[Header("Tags Handling")]
 		[SerializeField]
 		public char tagValueSplitter = ':';
 
 		[SerializeField]
-		public List<ValueChangeWatcher<string>> tagEvents = new List<ValueChangeWatcher<string>>();
+		public List<TagChangeWatcher> tagEvents = new List<TagChangeWatcher>();
 
 		[Header("Variable Observation")]
 
-		[Tooltip("Run ToString on InkList values in Variable Updates")]
-		public bool flattenListVariables = false;
-
 		[SerializeField]
-		public List<ValueChangeWatcher<object>> variableChangedEvents = new List<ValueChangeWatcher<object>>();
+		public List<InkVariableWatcher> variableChangedEvents = new List<InkVariableWatcher>();
 
 		public string State {
 			get => this.story.state.ToJson();
@@ -86,7 +84,7 @@ namespace InkWrapper {
 
 		public void Initialize() {
 			story = new Story(InkJsonAsset.text);
-			variableChangedEvents.ForEach(watcher => story.ObserveVariable(watcher.name, (k, v) => SendVariableUpdate(watcher, v)));
+			variableChangedEvents.ForEach(watcher => story.ObserveVariable(watcher.name, (k, v) => watcher.Invoke(v)));
 
 			// Load a state or standard save (if configured to)
 			if (debugState != null) LoadDebugState();
@@ -149,44 +147,32 @@ namespace InkWrapper {
 		}
 
 		// Tag Event functions
-		internal ValueChangeWatcher<string> GetOrAddTagEvent(string name) {
-			tagEvents = tagEvents ?? new List<ValueChangeWatcher<string>>();
+		internal TagChangeWatcher GetOrAddTagChangeWatcher(string name) {
+			tagEvents = tagEvents ?? new List<TagChangeWatcher>();
 			var watcher = tagEvents.Find(o => o.name == name);
 			if (watcher == null) {
-				watcher = new ValueChangeWatcher<string>(name);
+				watcher = new TagChangeWatcher(name);
 				tagEvents.Add(watcher);
 			}
 			return watcher;
 		}
 
-		public void AddTagListener(string key, UnityEngine.Events.UnityAction<string> call) => GetOrAddTagEvent(key).changed.AddListener(call);
+		public void AddTagListener(string key, UnityAction<string> call) => GetOrAddTagChangeWatcher(key).changed.AddListener(call);
 
-		public void RemoveTagListener(string key, UnityEngine.Events.UnityAction<string> call) => GetOrAddTagEvent(key).changed.RemoveListener(call);
+		public void RemoveTagListener(string key, UnityAction<string> call) => GetOrAddTagChangeWatcher(key).changed.RemoveListener(call);
 
 		// Variable Event functions
-		internal ValueChangeWatcher<object> GetOrAddVariableEvent(string name) {
-			variableChangedEvents = variableChangedEvents ?? new List<ValueChangeWatcher<object>>();
+		public InkVariableWatcher GetOrAddInkVariableWatcher(string name) {
+			variableChangedEvents = variableChangedEvents ?? new List<InkVariableWatcher>();
 			var watcher = variableChangedEvents.Find(o => o.name == name);
 			if (watcher == null) {
-				watcher = new ValueChangeWatcher<object>(name);
+				watcher = new InkVariableWatcher(name);
 				variableChangedEvents.Add(watcher);
 				// Setup actual watcher with ink
-				story.ObserveVariable(name, (k, v) => SendVariableUpdate(watcher, v));
-				SendVariableUpdate(watcher, story.variablesState[name]); // send initial value
+				story.ObserveVariable(name, (k, v) => watcher.Invoke(v));
+				watcher.Invoke(story.variablesState[name]);
 			}
 			return watcher;
 		}
-
-		private void SendVariableUpdate(ValueChangeWatcher<object> watcher, object newValue) {
-			if (newValue != null && flattenListVariables && newValue is InkList) {
-				newValue = ((InkList) newValue).ToString(); // flatten to string
-			}
-			watcher?.Invoke(newValue);
-		}
-
-		public void AddVariableListener(string key, UnityEngine.Events.UnityAction<object> call) => GetOrAddVariableEvent(key).changed.AddListener(call);
-
-		public void RemoveVariableListener(string key, UnityEngine.Events.UnityAction<object> call) => GetOrAddVariableEvent(key).changed.RemoveListener(call);
-
 	}
 }
