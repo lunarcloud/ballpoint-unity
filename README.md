@@ -2,8 +2,8 @@
 Helper tools to make using Inkle's Ink in Unity easier, primarily through inspector-friendly wrapper classes.
 
 ## Requirements
-* Unity 2020 or newer
-* Ink Unity Integration
+* Unity 2020.1 or newer
+* [Ink Unity Integration](https://github.com/inkle/ink-unity-integration)
 
 ## Example
 ![](screenshot.jpg)
