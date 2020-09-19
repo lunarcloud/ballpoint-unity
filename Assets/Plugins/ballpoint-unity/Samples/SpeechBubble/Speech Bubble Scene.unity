@@ -1275,7 +1275,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d60e9dfcc525fa606928fb43c830a004, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InkJsonAsset: {fileID: 4900000, guid: 12a874a37d0d6e079a7b25b62961757f, type: 3}
+  InkJsonAsset: {fileID: 4900000, guid: 6d32d955949ee3df68ee4176bd46457b, type: 3}
   debugState: {fileID: 0}
   loadSaveFileOnStart: 0
   skipInitialBlankLine: 1
@@ -1313,6 +1313,9 @@ MonoBehaviour:
     changedAsFloat:
       m_PersistentCalls:
         m_Calls: []
+    changedAsBool:
+      m_PersistentCalls:
+        m_Calls: []
     changedAsString:
       m_PersistentCalls:
         m_Calls:
@@ -1329,6 +1332,9 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
     changedAsList:
+      m_PersistentCalls:
+        m_Calls: []
+    changedAsPath:
       m_PersistentCalls:
         m_Calls: []
     changedAsObject:

@@ -2,12 +2,6 @@ VAR lastKnownSpeaker = "None"
 LIST music = A, (B)
 LIST scene = Blue ,(Orange), Purple
 
-VAR a = false
-VAR b = "Emilia"
-VAR c = 521
-VAR d = -> hang_out
-
-
 This is an example of narration.
 * explore a bit[]. #hidedialog
   ~scene = Purple
@@ -28,7 +22,7 @@ With choices even,
  * YAASSSS[!?]!
   And from that point onward A decided to... #speaker:None
   ** Never speak to B again
-  ** Hang out with B from dusk til' dawn
+  ** Hang out with B from dusk til' dawn[] -> hang_out
   ** YAAAASSSSS[] # speaker:A
     *** lol
 ---

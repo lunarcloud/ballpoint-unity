@@ -938,8 +938,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 856843190}
-  - component: {fileID: 856843191}
   - component: {fileID: 856843192}
+  - component: {fileID: 856843191}
   m_Layer: 0
   m_Name: Story Manager
   m_TagString: Untagged
