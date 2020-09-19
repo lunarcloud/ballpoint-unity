@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Portrait : MonoBehaviour
-{
-    public string speakerName = "None";
+namespace Ballpoint.SpeechBubble.Sample {
+    public class Portrait : MonoBehaviour {
+        public string speakerName = "None";
 
-    public void ShowIfSpeaker(string value) => gameObject.SetActive(value == speakerName);
+        public void ShowIfSpeaker(string value) => gameObject.SetActive(value == speakerName);
+    }
 }

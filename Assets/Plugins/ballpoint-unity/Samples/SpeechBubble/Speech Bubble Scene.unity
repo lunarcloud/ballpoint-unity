@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 30138437}
   - component: {fileID: 30138436}
   - component: {fileID: 30138438}
+  - component: {fileID: 30138439}
   m_Layer: 0
   m_Name: B
   m_TagString: Untagged
@@ -181,7 +182,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: de43a2bd8469f43cd88c25ff38dad830, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c6df8104058e497c9b60a9dce345339e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -220,6 +221,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speechBubble: {fileID: 1015091835}
+  OnSpeakingChange:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 30138439}
+        m_TargetAssemblyTypeName: Ballpoint.SpeechBubble.Sample.TalkListenSpriteChange,
+          Assembly-CSharp-firstpass
+        m_MethodName: IsTalking
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &30138439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 30138435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d6b79b8687891733a37847799c8d4d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  talking: {fileID: 21300000, guid: c6df8104058e497c9b60a9dce345339e, type: 3}
+  listening: {fileID: 21300000, guid: 9e7274e691491fe00b6f1431202c0a06, type: 3}
 --- !u!1 &113249845
 GameObject:
   m_ObjectHideFlags: 0
@@ -231,6 +262,7 @@ GameObject:
   - component: {fileID: 113249847}
   - component: {fileID: 113249846}
   - component: {fileID: 113249848}
+  - component: {fileID: 113249849}
   m_Layer: 0
   m_Name: A
   m_TagString: Untagged
@@ -278,12 +310,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 7dac6b4d404ed57fb8f39d5fd71b8a9b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 990de1569a2e985a1ba285e3fa858480, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 2.56, y: 5.12}
+  m_Size: {x: 1.92, y: 2.56}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -317,6 +349,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speechBubble: {fileID: 305439483}
+  OnSpeakingChange:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 113249849}
+        m_TargetAssemblyTypeName: Ballpoint.SpeechBubble.Sample.TalkListenSpriteChange,
+          Assembly-CSharp-firstpass
+        m_MethodName: IsTalking
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &113249849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 113249845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d6b79b8687891733a37847799c8d4d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  talking: {fileID: 21300000, guid: 990de1569a2e985a1ba285e3fa858480, type: 3}
+  listening: {fileID: 21300000, guid: 72bd14b9c4ef73179b953ce8ee5e404c, type: 3}
 --- !u!1 &271318234
 GameObject:
   m_ObjectHideFlags: 0
@@ -604,11 +666,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3156715933174225730, guid: c212abff8ebf3738fb91387c341b6dd6, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -2.77
+      value: -2.73
       objectReference: {fileID: 0}
     - target: {fileID: 3156715933174225730, guid: c212abff8ebf3738fb91387c341b6dd6, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 2.49
+      value: 2.23
       objectReference: {fileID: 0}
     - target: {fileID: 3156715933174225730, guid: c212abff8ebf3738fb91387c341b6dd6, type: 3}
       propertyPath: m_SizeDelta.x
@@ -789,11 +851,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3156715933174225730, guid: c212abff8ebf3738fb91387c341b6dd6, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 2.89
+      value: 2.12
       objectReference: {fileID: 0}
     - target: {fileID: 3156715933174225730, guid: c212abff8ebf3738fb91387c341b6dd6, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 2.63
+      value: 2.12
       objectReference: {fileID: 0}
     - target: {fileID: 3156715933174225730, guid: c212abff8ebf3738fb91387c341b6dd6, type: 3}
       propertyPath: m_SizeDelta.x
@@ -1032,6 +1094,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speechBubble: {fileID: 955611578}
+  OnSpeakingChange:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &1644557856
 PrefabInstance:
   m_ObjectHideFlags: 0

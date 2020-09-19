@@ -33,17 +33,18 @@ namespace Ballpoint.SpeechBubble {
             ink.BeginStory();
         }
 
-        private void HideAllSpeechBubbles() => talkables?.ForEach(o => o?.speechBubble.SetActive(false));
+        private void HideAllSpeechBubbles() => talkables?.ForEach(o => o?.SetAsSpeaker(false));
 
         private void SetSpeaker(string value) {
             //Debug.Log($"speaker is {value}");
-            speaker?.speechBubble.SetActive(false);
+            speaker?.SetAsSpeaker(false);
             speaker = talkables.Find(o => o?.name == value); // yes it can be set to null, aka hidden
+            speaker?.SetAsSpeaker(true);
 
             ink.story.variablesState["lastKnownSpeaker"] = value;
         }
 
-        private void StoryUpdate(Ballpoint.StoryUpdate update) => speaker?.speechBubble.StoryUpdate(update);
+        private void StoryUpdate(Ballpoint.StoryUpdate update) => speaker?.StoryUpdate(update);
 
         [ContextMenu("Autodetect All Talkables")]
         private void AutodetectTalkables() => talkables = (FindObjectsOfType(typeof(Talkable)) as Talkable[])?.ToList<Talkable>();
