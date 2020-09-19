@@ -1,6 +1,6 @@
 {
   "name": "org.samsarette.ballpoint-unity",
-  "version": "0.5.0",
+  "version": "0.6.1",
   "displayName": "Ballpoint for Ink",
   "description": "Friendly Wrappers for Inkle's Ink API on Unity.",
   "unity": "2020.1",
