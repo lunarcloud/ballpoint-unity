@@ -20,12 +20,12 @@ namespace Ballpoint.SpeechBubble {
 
         private void OnValidate() {
             ink = ink ?? GetComponent<InkManager>();
-            ink.GetOrAddTagChangeWatcher("speaker"); // Make sure it shows up in the inspector 
+            ink.GetOrAddTagChangeWatcher("said"); // Make sure it shows up in the inspector 
         }
 
         void Start() {
             HideAllSpeechBubbles();
-            ink.AddTagListener("speaker", SetSpeaker);
+            ink.AddTagListener("said", SetSpeaker);
             ink.storyUpdate.AddListener(StoryUpdate);
             ink.storyEnded.AddListener(HideAllSpeechBubbles);
             ink.Initialize();

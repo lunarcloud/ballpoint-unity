@@ -29,7 +29,7 @@ namespace Ballpoint.SpeechBubble {
 
         // Start is called before the first frame update
         void Start() {
-            ink.AddTagListener("speaker", SetSpeaker);
+            ink.AddTagListener("said", SetSpeaker);
             ink.storyUpdate.AddListener(StoryUpdate);
             ink.storyEnded.AddListener(() => dialogBox?.SetActive(false));
             ink.Initialize();
