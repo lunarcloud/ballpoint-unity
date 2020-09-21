@@ -1,5 +1,5 @@
 VAR lastKnownSpeaker = "None"
-LIST music = A, (B)
+LIST music = SpringChicken, (BeatThee)
 LIST scene = Desert ,(Fall), Forest
 
 This is an example of narration.
@@ -13,7 +13,7 @@ This is an example of narration.
 And this is from the perspective of me. #said:A
 It continues-
 
-~music = A
+~music = SpringChicken
 
 Until I interrupt. #said:B
 With choices even,

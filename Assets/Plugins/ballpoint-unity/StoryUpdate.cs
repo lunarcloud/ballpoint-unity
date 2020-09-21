@@ -14,5 +14,11 @@ namespace Ballpoint {
             this.tags = tags;
             atEnd = end;
         }
+
+        public override string ToString() {
+            var endString = atEnd ? ", at end" : "";
+            return $@"Story Update:
+            {choices.Count} choice(s), {tags.Keys.Count} tag(s){endString}, text = {text}";
+        }
     }
 }

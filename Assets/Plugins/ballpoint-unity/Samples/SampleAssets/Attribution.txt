@@ -1,0 +1,9 @@
+Art assets from 
+* https://kenney.nl/assets/toon-characters-1
+* https://kenney.nl/assets/background-elements-redux
+
+Music assets from https://freepd.com/
+"Beat Thee" song written by Alexander Nakarada.
+"Spring Chicken" Written by Bryan Teoh. 
+
+All these licensed under the CC0 1.0 Universal license.

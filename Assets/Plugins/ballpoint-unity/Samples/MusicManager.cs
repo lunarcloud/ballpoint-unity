@@ -1,10 +1,21 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 namespace Ballpoint.SpeechBubble.Sample {
-    [RequireComponent(typeof(AudioSource))]
     public class MusicManager : MonoBehaviour {
+        
+        public bool logSongChange = true;
+        private AudioSource currentSong;
+
+        private AudioSource[] audioSources;
+
+        void Awake() => audioSources = GetComponentsInChildren<AudioSource>();
+
         public void MusicChanged(string value) {
-            Debug.Log($"Music is now {value}");
+            currentSong?.Stop();
+            currentSong = audioSources?.Single(a => a.name == value);
+            currentSong?.Play();
+            if (logSongChange) Debug.Log($"Song is now {currentSong.clip.name}");
         }
     }
 }

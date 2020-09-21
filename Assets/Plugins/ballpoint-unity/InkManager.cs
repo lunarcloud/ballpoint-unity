@@ -15,16 +15,10 @@ namespace Ballpoint {
 
 		[SerializeField]
 		public TextAsset InkJsonAsset;
-		public Story story {
-			get;
-			private set;
-		}
+		public Story story { get; private set; }
 
 		[HideInInspector]
-		public string standardSavePath {
-			get;
-			private set;
-		}
+		public string standardSavePath { get; private set; }
 
 		[Header("Start-Up")]
 
@@ -61,6 +55,7 @@ namespace Ballpoint {
 
 		[SerializeField]
 		public List<InkVariableWatcher> variableChangedEvents = new List<InkVariableWatcher>();
+		public StoryUpdate lastStoryUpdate { get; private set; }
 
 		public string State {
 			get => this.story.state.ToJson();
@@ -122,7 +117,8 @@ namespace Ballpoint {
 			var text = story.currentText.Trim();
 			var tags = ProcessTags(story.currentTags);
 			var choices = story.currentChoices.Select(c => c.text).ToList<string>();
-			storyUpdate?.Invoke(new StoryUpdate(text, choices, tags, IsAtEnd()));
+			lastStoryUpdate = new StoryUpdate(text, choices, tags, IsAtEnd());
+			storyUpdate?.Invoke(lastStoryUpdate);
 		}
 
 		public void Continue(int choiceIndex) {
