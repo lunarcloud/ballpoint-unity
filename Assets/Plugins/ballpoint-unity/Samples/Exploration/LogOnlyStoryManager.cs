@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace Ballpoint.SpeechBubble.Sample {
+namespace Ballpoint.Sample.Exploration {
 
     [RequireComponent(typeof(InkManager))]
     [DisallowMultipleComponent]

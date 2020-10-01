@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ballpoint.SpeechBubble.Sample {
+namespace Ballpoint.Sample.Exploration {
     public class Player : MonoBehaviour {
 
         public InkManager ink;

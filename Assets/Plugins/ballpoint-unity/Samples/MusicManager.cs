@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using UnityEngine;
 
-namespace Ballpoint.SpeechBubble.Sample {
+namespace Ballpoint.Sample {
     public class MusicManager : MonoBehaviour {
         
         public bool logSongChange = true;

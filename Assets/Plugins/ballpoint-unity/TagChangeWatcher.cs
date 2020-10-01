@@ -1,5 +1,5 @@
-using UnityEngine.Events;
 using Ink.Runtime;
+using UnityEngine.Events;
 
 namespace Ballpoint {
     [System.Serializable]

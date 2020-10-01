@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ballpoint.SpeechBubble.Sample {
+namespace Ballpoint.Sample.DialogBox {
     public class BackgroundManager : MonoBehaviour {
         public GameObject currentBackground;
         public void BackgroundChanged(string n) {

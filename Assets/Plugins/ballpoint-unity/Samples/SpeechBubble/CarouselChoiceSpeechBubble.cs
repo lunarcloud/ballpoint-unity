@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ballpoint.SpeechBubble.Sample {
+namespace Ballpoint.Sample.SpeechBubble {
 
     [DisallowMultipleComponent]
     [HelpURL(InkManager.HelpURL)]
-    public class CarouselChoiceSpeechBubble : SpeechBubble {
+    public class CarouselChoiceSpeechBubble : Ballpoint.SpeechBubble.SpeechBubble {
 
         [SerializeField]
         GameObject previousIndicator = null;

@@ -49,8 +49,9 @@ namespace Ballpoint {
         [ShowIf(nameof(handleAsType), HandleTypeEnum.Object)]
         public UnityEvent<object> changedAsObject = new UnityEvent<object>();
 
-        public InkVariableWatcher(string name) {
+        public InkVariableWatcher(string name, HandleTypeEnum types) {
             this.name = name;
+            this.handleAsType |= types;
         }
 
         public void Invoke(object value) {

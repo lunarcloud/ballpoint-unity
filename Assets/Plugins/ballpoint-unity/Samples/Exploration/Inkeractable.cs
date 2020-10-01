@@ -3,13 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ballpoint.SpeechBubble.Sample {
+namespace Ballpoint.Sample.Exploration {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Collider2D))]
     public class Inkeractable : MonoBehaviour {
-        
-        void OnTriggerEnter2D(Collider2D other)
-        {
+
+        void OnTriggerEnter2D(Collider2D other) {
             var maybeInkeractor = other.GetComponent<Player>();
             if (maybeInkeractor != null) {
                 maybeInkeractor.interactTarget = this;
@@ -17,8 +16,7 @@ namespace Ballpoint.SpeechBubble.Sample {
             }
         }
 
-        void OnTriggerExit2D(Collider2D other)
-        {
+        void OnTriggerExit2D(Collider2D other) {
             var maybeInkeractor = other.GetComponent<Player>();
             if (maybeInkeractor.interactTarget == this) {
                 Debug.Log($"Leaving inkeractable: {name}");
@@ -26,8 +24,7 @@ namespace Ballpoint.SpeechBubble.Sample {
             }
         }
 
-        public virtual void Interact()
-        {
+        public virtual void Interact() {
             Debug.Log($"Interacted with {name}"); // perform generic animations or whatnot
         }
     }

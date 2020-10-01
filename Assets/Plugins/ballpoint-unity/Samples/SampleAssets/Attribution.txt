@@ -1,6 +1,8 @@
 Art assets from 
 * https://kenney.nl/assets/toon-characters-1
 * https://kenney.nl/assets/background-elements-redux
+* https://kenney.nl/assets/ui-pack-rpg-expansion
+* https://kenney.nl/assets/animal-pack-redux
 
 Music assets from https://freepd.com/
 "Beat Thee" song written by Alexander Nakarada.

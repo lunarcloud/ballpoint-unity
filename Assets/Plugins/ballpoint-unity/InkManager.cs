@@ -38,6 +38,8 @@ namespace Ballpoint {
 		[Tooltip("Not including empty text with choices")]
 		public bool skipBlankLines = true;
 
+		public UnityEvent storyInitialized;
+
 		[SerializeField]
 		public UnityEvent<StoryUpdate> storyUpdate;
 
@@ -87,6 +89,8 @@ namespace Ballpoint {
 			// Load a state or standard save (if configured to)
 			if (debugState != null) LoadDebugState();
 			else if (loadSaveFileOnStart) TryLoad();
+
+			storyInitialized?.Invoke();
 		}
 
 		public void LoadDebugState() => State = debugState.text;
@@ -161,15 +165,19 @@ namespace Ballpoint {
 		public void RemoveTagListener(string key, UnityAction<string> call) => GetOrAddTagChangeWatcher(key).changed.RemoveListener(call);
 
 		// Variable Event functions
-		public InkVariableWatcher GetOrAddInkVariableWatcher(string name) {
+		public InkVariableWatcher GetOrAddInkVariableWatcher(string name, HandleTypeEnum types) {
 			variableChangedEvents = variableChangedEvents ?? new List<InkVariableWatcher>();
 			var watcher = variableChangedEvents.Find(o => o.name == name);
 			if (watcher == null) {
-				watcher = new InkVariableWatcher(name);
+				watcher = new InkVariableWatcher(name, types);
 				variableChangedEvents.Add(watcher);
-				// Setup actual watcher with ink
-				story.ObserveVariable(name, (k, v) => watcher.Invoke(v));
-				watcher.Invoke(story.variablesState[name]);
+				if (story) {
+					// Setup actual watcher with ink
+					story.ObserveVariable(name, (k, v) => watcher.Invoke(v));
+					watcher.Invoke(story.variablesState[name]);
+				}
+			} else {
+				watcher.handleAsType |= types; // ensure it's acquired with the ability to use the types desired
 			}
 			return watcher;
 		}

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ballpoint.SpeechBubble.Sample {
+namespace Ballpoint.Sample.DialogBox {
     public class Portrait : MonoBehaviour {
         public string speakerName = "None";
 
