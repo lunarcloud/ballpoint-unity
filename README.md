@@ -15,5 +15,8 @@ Helper tools to make using Inkle's Ink in Unity easier, primarily through inspec
 ### Explorative Choices
 ![](screenshot4.jpg)
 
+### Inventory Management
+![](screenshot5.jpg)
+
 ### Inspector
 ![](screenshot1.jpg)
