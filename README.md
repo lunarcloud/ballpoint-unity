@@ -1,5 +1,5 @@
 # Ballpoint: Friendly Wrapper for Ink ( on Unity )
-[![openupm](https://img.shields.io/npm/v/com.littlebigfun.addressable-importer?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.littlebigfun.addressable-importer/)
+[![openupm](https://img.shields.io/npm/v/org.samsarette.ballpoint-unity?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/org.samsarette.ballpoint-unity/)
 
 Helper tools to make using Inkle's Ink in Unity easier, primarily through inspector-friendly wrapper classes.
 Documentation is at [Documentation~/Ballpoint.md](Documentation~/Ballpoint.md). 
