@@ -11,7 +11,7 @@ namespace Ballpoint {
 	[HelpURL(HelpURL + "#ink-manager")]
 	public class InkManager : MonoBehaviour {
 
-		public const string HelpURL = "https://github.com/lunarcloud/ballpoint-unity/tree/master/Packages/org.samsarette.ballpoint-unity/Documentation~/Ballpoint.md";
+		public const string HelpURL = "https://github.com/lunarcloud/ballpoint-unity/tree/master/Documentation~/Ballpoint.md";
 
 		[SerializeField]
 		public TextAsset InkJsonAsset;
