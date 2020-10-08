@@ -2,11 +2,10 @@
 [![openupm](https://img.shields.io/npm/v/com.littlebigfun.addressable-importer?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.littlebigfun.addressable-importer/)
 
 Helper tools to make using Inkle's Ink in Unity easier, primarily through inspector-friendly wrapper classes.
-Documentation is at [Documentation~/Ballpoint.md](Documentation~/Ballpoint.md). Requires 2020.1 or later. Install [via OpenUPM](https://openupm.com/packages/org.samsarette.ballpoint-unity):
+Documentation is at [Documentation~/Ballpoint.md](Documentation~/Ballpoint.md). 
 
-```sh
-openupm add org.samsarette.ballpoint-unity
-```
+## Install
+Requires 2020.1 or later, Install [via OpenUPM](https://openupm.com/packages/org.samsarette.ballpoint-unity).
 
 ## Examples
 
