@@ -41,7 +41,7 @@ With the Ink Manager you can set up "Variable Changed Events", Unity Events that
 Dialog Box Manager
 ---------------------------------
 
-Please see Samples\DialogBox\DialogBoxDemo.scene for example.
+Please see Samples\DialogBox\DialogBoxDemo.unity for example.
 
 Create a central UI for all dialog. It should contain and be wired up to the Dialog Box Manager:
 
@@ -57,7 +57,7 @@ Additionally, your Next Button should have its OnClick configured to trigger Ink
 Speech Bubble Manager
 -------------------------------------------
 
-Please see Samples\SpeechBubble\Speech Bubble Scene.scene for example.
+Please see Samples\SpeechBubble\Speech Bubble Scene.unity for example.
 
 Create a prefab UI for your speech bubbles, and attach a script which extends SpeechBubble\SpeechBubble.cs - these will be custom, as the way your bubbles work and present choices may vary greatly between projects.
 
@@ -68,12 +68,12 @@ Then, go to the story manager, right click on the Speech Bubble Manager (Script)
 Exploration & Interaction
 --------------------------------
 
-Please see Samples\Exploration\Exploration.scene for example. Only a sample is provided for this, as a guide.
+Please see Samples\Exploration\Exploration.unity for example. Only a sample is provided for this, as a guide.
 
 Inventory Manager
 --------------------------------
 
-Please see Samples\Inventory\Inventory.scene for example.
+Please see Samples\Inventory\Inventory.unity for example.
 
 Add Inventory\InventoryManager.cs to your Story Manager. Create and provide the script with the names of:
 
