@@ -7,7 +7,7 @@ Helper tools to make using Inkle's Ink in Unity easier, primarily through inspec
 
 ## Documentation
 
-See [Assets/Plugins/ballpoint-unity/Readme.md](Assets/Plugins/ballpoint-unity/Readme.md)
+See [Packages/org.samsarette.ballpoint-unity/Documentation~/Ballpoint.md](Packages/org.samsarette.ballpoint-unity/Documentation~/Ballpoint.md)
 
 ## Examples
 

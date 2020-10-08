@@ -1,0 +1,44 @@
+{
+  "name": "org.samsarette.ballpoint-unity",
+  "version": "1.0.0-preview",
+  "displayName": "Ballpoint for Ink",
+  "description": "Friendly Wrappers for Inkle's Ink API on Unity.",
+  "unity": "2020.1",
+  "dependencies": {
+    "com.inklestudios.ink-unity-integration": "0.9.50"
+  },
+  "keywords": [
+    "ink",
+    "inky",
+    "inkle",
+    "story",
+    "narrative"
+  ],
+  "samples": [
+    {
+      "displayName": "Dialog Box",
+      "description": "Description for sample 1",
+      "path": "Samples~/DialogBox"
+    },
+    {
+      "displayName": "Speech Bubble",
+      "description": "Description for sample 1",
+      "path": "Samples~/SpeechBubble"
+    },
+    {
+      "displayName": "Exploration Interaction",
+      "description": "Description for sample 1",
+      "path": "Samples~/Exploration"
+    },
+    {
+      "displayName": "Inventory Management",
+      "description": "Description for sample 1",
+      "path": "Samples~/Inventory"
+    }
+  ],
+  "author": {
+    "name": "Sam Sarette",
+    "email": "samuelsarette@linux.com.com",
+    "url": "https://github.com/lunarcloud"
+  }
+}

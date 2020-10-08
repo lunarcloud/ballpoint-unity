@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.inklestudios.ink-unity-integration": {
+      "version": "0.9.50",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
@@ -45,6 +52,14 @@
       "dependencies": {
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.imgui": "1.0.0"
+      }
+    },
+    "org.samsarette.ballpoint-unity": {
+      "version": "file:org.samsarette.ballpoint-unity",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.inklestudios.ink-unity-integration": "0.9.50"
       }
     },
     "com.unity.modules.ai": {
