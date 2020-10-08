@@ -11,7 +11,7 @@ namespace Ballpoint {
 	[HelpURL(HelpURL)]
 	public class InkManager : MonoBehaviour {
 
-		public const string HelpURL = "https://github.com/lunarcloud/ballpoint-unity";
+		public const string HelpURL = "https://github.com/lunarcloud/ballpoint-unity/tree/master/Assets/Plugins/ballpoint-unity/Readme.md";
 
 		[SerializeField]
 		public TextAsset InkJsonAsset;
@@ -51,7 +51,7 @@ namespace Ballpoint {
 		public char tagValueSplitter = ':';
 
 		[SerializeField]
-		public List<TagChangeWatcher> tagEvents = new List<TagChangeWatcher>();
+		public List<TagEventWatcher> tagEvents = new List<TagEventWatcher>();
 
 		[Header("Variable Observation")]
 
@@ -73,7 +73,7 @@ namespace Ballpoint {
 
 		public void Save(string path = null) => File.WriteAllText(pathOrStandardSavePath(path), State);
 
-		public void Load(string path = null) => State = File.ReadAllText(pathOrStandardSavePath(path));
+		private void Load(string path = null) => State = File.ReadAllText(pathOrStandardSavePath(path));
 
 		public bool TryLoad(string path = null) {
 			if (!File.Exists(pathOrStandardSavePath(path))) return false;
@@ -150,19 +150,19 @@ namespace Ballpoint {
 		}
 
 		// Tag Event functions
-		internal TagChangeWatcher GetOrAddTagChangeWatcher(string name) {
-			tagEvents = tagEvents ?? new List<TagChangeWatcher>();
+		internal TagEventWatcher GetOrAddTagChangeWatcher(string name) {
+			tagEvents = tagEvents ?? new List<TagEventWatcher>();
 			var watcher = tagEvents.Find(o => o.name == name);
 			if (watcher == null) {
-				watcher = new TagChangeWatcher(name);
+				watcher = new TagEventWatcher(name);
 				tagEvents.Add(watcher);
 			}
 			return watcher;
 		}
 
-		public void AddTagListener(string key, UnityAction<string> call) => GetOrAddTagChangeWatcher(key).changed.AddListener(call);
+		public void AddTagListener(string key, UnityAction<string> call) => GetOrAddTagChangeWatcher(key).tagEvent.AddListener(call);
 
-		public void RemoveTagListener(string key, UnityAction<string> call) => GetOrAddTagChangeWatcher(key).changed.RemoveListener(call);
+		public void RemoveTagListener(string key, UnityAction<string> call) => GetOrAddTagChangeWatcher(key).tagEvent.RemoveListener(call);
 
 		// Variable Event functions
 		public InkVariableWatcher GetOrAddInkVariableWatcher(string name, HandleTypeEnum types) {
