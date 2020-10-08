@@ -8,8 +8,10 @@ namespace Ballpoint.Inventory {
 
     [RequireComponent(typeof(InkManager))]
     [DisallowMultipleComponent]
-    [HelpURL(InkManager.HelpURL)]
+    [HelpURL(HelpURL)]
     public class InventoryManager : MonoBehaviour {
+
+        public const string HelpURL = InkManager.HelpURL + "#inventory-manager";
 
         private InkManager ink;
         public string inkListName = "inventory";

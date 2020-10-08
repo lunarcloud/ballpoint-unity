@@ -2,6 +2,7 @@
 
 namespace Ballpoint.Inventory {
     [CreateAssetMenu(fileName = "New Item", menuName = "Ballpoint/Inventory Item")]
+    [HelpURL(InventoryManager.HelpURL)]
     public class InventoryItem : ScriptableObject {
         public string listDefinitionName = "inventory";
         public new string name;

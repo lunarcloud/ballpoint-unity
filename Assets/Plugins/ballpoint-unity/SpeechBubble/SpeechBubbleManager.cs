@@ -6,8 +6,10 @@ namespace Ballpoint.SpeechBubble {
 
     [RequireComponent(typeof(InkManager))]
     [DisallowMultipleComponent]
-    [HelpURL(InkManager.HelpURL)]
+    [HelpURL(HelpURL)]
     public class SpeechBubbleManager : MonoBehaviour {
+
+        public const string HelpURL = InkManager.HelpURL + "#speech-bubble-manager";
         private InkManager ink;
 
         [SerializeField]

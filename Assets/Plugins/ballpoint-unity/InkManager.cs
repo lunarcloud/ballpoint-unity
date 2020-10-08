@@ -8,7 +8,7 @@ using UnityEngine.Events;
 namespace Ballpoint {
 
 	[DisallowMultipleComponent]
-	[HelpURL(HelpURL)]
+	[HelpURL(HelpURL + "#ink-manager")]
 	public class InkManager : MonoBehaviour {
 
 		public const string HelpURL = "https://github.com/lunarcloud/ballpoint-unity/tree/master/Assets/Plugins/ballpoint-unity/Readme.md";

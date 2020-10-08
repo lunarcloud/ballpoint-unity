@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Ballpoint.SpeechBubble {
 
     [DisallowMultipleComponent]
-    [HelpURL(InkManager.HelpURL)]
+    [HelpURL(SpeechBubbleManager.HelpURL)]
     public abstract class SpeechBubble : MonoBehaviour {
 
         [SerializeField]

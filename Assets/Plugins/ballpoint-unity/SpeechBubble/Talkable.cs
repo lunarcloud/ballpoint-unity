@@ -4,7 +4,7 @@ using UnityEngine.Events;
 namespace Ballpoint.SpeechBubble {
 
     [DisallowMultipleComponent]
-    [HelpURL(InkManager.HelpURL)]
+    [HelpURL(SpeechBubbleManager.HelpURL)]
     public class Talkable : MonoBehaviour {
         public SpeechBubble speechBubble;
 

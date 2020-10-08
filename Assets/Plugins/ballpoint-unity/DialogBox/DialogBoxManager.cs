@@ -6,8 +6,10 @@ namespace Ballpoint.SpeechBubble {
 
     [RequireComponent(typeof(InkManager))]
     [DisallowMultipleComponent]
-    [HelpURL(InkManager.HelpURL)]
+    [HelpURL(HelpURL)]
     public class DialogBoxManager : MonoBehaviour {
+
+        public const string HelpURL = InkManager.HelpURL + "#dialog-box-manager";
         private InkManager ink;
 
         [HideInInspector]
