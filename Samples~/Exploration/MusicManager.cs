@@ -13,7 +13,7 @@ namespace Ballpoint.Sample.Exploration {
 
         public void MusicChanged(string value) {
             currentSong?.Stop();
-            currentSong = audioSources?.Single(a => a.name == value);
+            currentSong = audioSources?.SingleOrDefault(a => a.name == value);
             currentSong?.Play();
             if (logSongChange) Debug.Log($"Song is now {currentSong.clip.name}");
         }
