@@ -37,6 +37,7 @@ namespace Ballpoint {
 
 		[Tooltip("Not including empty text with choices")]
 		public bool skipBlankLines = true;
+		public bool _skipBlankLines; // actually used
 
 		public UnityEvent storyInitialized;
 
@@ -99,10 +100,9 @@ namespace Ballpoint {
 			// Send out Variable initial values
 			variableChangedEvents.ForEach(watcher => watcher.Invoke(story.variablesState[watcher.name]));
 			// Skip the first line if blank (if configured to)
-			if (skipInitialBlankLine && IsBlankLineWithoutChoices()) story.Continue();
-			if (IsAtEnd()) storyEnded?.Invoke();
-			// Initial Story Update
-			SendStoryUpdate();
+			_skipBlankLines = skipInitialBlankLine;
+			Continue();
+			_skipBlankLines = skipBlankLines;
 		}
 
 		public void Continue() {
@@ -110,12 +110,12 @@ namespace Ballpoint {
 				storyEnded?.Invoke();
 				return;
 			}
+			if (!story.canContinue) return;
 			// Continue at least once
-			if (story.canContinue) story.Continue();
-			while (skipBlankLines && IsBlankLineWithoutChoices() && !IsAtEnd()) {
+			do {
 				story.Continue();
-			}
-			SendStoryUpdate();
+				SendStoryUpdate();
+			} while (_skipBlankLines && IsBlankLineWithoutChoices() && !IsAtEnd());
 		}
 		private void SendStoryUpdate() {
 			var text = story.currentText.Trim();
