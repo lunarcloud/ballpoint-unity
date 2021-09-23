@@ -1,16 +1,19 @@
 ﻿using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEditor.Events;
 
 namespace Ballpoint.SpeechBubble {
 
-    [RequireComponent(typeof(InkManager))]
+    [RequireComponent(typeof(InkEventDispatcher))]
     [DisallowMultipleComponent]
     [HelpURL(HelpURL)]
+	[AddComponentMenu("Ballpoint/Dialog Box Manager")]
     public class DialogBoxManager : MonoBehaviour {
 
         public const string HelpURL = InkManager.HelpURL + "#dialog-box-manager";
         private InkManager ink;
+        private InkEventDispatcher inkEvents;
 
         [HideInInspector]
         public string speaker = "";
@@ -25,20 +28,46 @@ namespace Ballpoint.SpeechBubble {
         [Header("Prefabs")]
         public Button choicePrefab;
 
+        [SerializeField]
+        [HideInInspector]
+        private bool _InitiallyWiredEvents = false;
+
         private void OnValidate() {
-            ink = ink ?? GetComponent<InkManager>();
+            ink = ink ?? InkManager.FindAny();
+            inkEvents = inkEvents ?? InkEventDispatcher.FindAny();
+
+            if (_InitiallyWiredEvents == false) {
+                _InitiallyWiredEvents = true;
+                WireEvents();
+            }
         }
+        
+		[ContextMenu("Re-Add Events to Dispatcher")] 
+        private void WireEvents() { 
+            if (inkEvents == null) Debug.LogError("InkEvents is null");
+
+            // Hook up the events so they show up in the inspector
+            UnityEventTools.AddPersistentListener(inkEvents.StoryUpdate, this.StoryUpdate);
+            UnityEventTools.AddPersistentListener(inkEvents.StoryEnded, this.HideDialogBox);
+
+            var watcher = inkEvents.GetOrAddTagChangeWatcher(InkTagState.StartsWith, "said:"); 
+
+            if (watcher == null) Debug.LogError("'Said' watcher is null");
+
+            UnityEventTools.AddPersistentListener(watcher.tagEvent, SetSpeaker);
+        }
+        
 
         // Start is called before the first frame update
         void Start() {
-            ink.AddTagListener("said", SetSpeaker);
-            ink.storyUpdate.AddListener(StoryUpdate);
-            ink.storyEnded.AddListener(() => dialogBox?.SetActive(false));
             ink.Initialize();
             SetSpeaker(ink.story.variablesState["lastKnownSpeaker"] as string ?? "");
             ink.BeginStory();
 
         }
+
+        public void HideDialogBox() => dialogBox?.SetActive(false);
+
         private void SetSpeaker(string value) {
             speaker = value == "None" ? "" : value;
             ink.story.variablesState["lastKnownSpeaker"] = speaker;

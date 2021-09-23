@@ -1,16 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEditor.Events;
 
 namespace Ballpoint.SpeechBubble {
 
-    [RequireComponent(typeof(InkManager))]
+    [RequireComponent(typeof(InkEventDispatcher))]
     [DisallowMultipleComponent]
     [HelpURL(HelpURL)]
+	[AddComponentMenu("Ballpoint/Speech Bubble/Speech Bubble Manager")]
     public class SpeechBubbleManager : MonoBehaviour {
 
         public const string HelpURL = InkManager.HelpURL + "#speech-bubble-manager";
         private InkManager ink;
+        private InkEventDispatcher inkEvents;
 
         [SerializeField]
         [ContextMenuItem("Auto Detect All", "AutodetectTalkables")]
@@ -20,16 +23,36 @@ namespace Ballpoint.SpeechBubble {
         [Tooltip("If left unset, will attempt to set to \"None\".")]
         public Talkable speaker;
 
+
+        [SerializeField]
+        [HideInInspector]
+        private bool _InitiallyWiredEvents;
+
         private void OnValidate() {
-            ink = ink ?? GetComponent<InkManager>();
-            ink.GetOrAddTagChangeWatcher("said"); // Make sure it shows up in the inspector 
+            ink = ink ?? InkManager.FindAny();
+            inkEvents = inkEvents ?? InkEventDispatcher.FindAny();
+            
+            if (_InitiallyWiredEvents == false) {
+                _InitiallyWiredEvents = true;
+                WireEvents();
+            }
+        }
+        
+		[ContextMenu("Re-Add Events to Dispatcher")] 
+        private void WireEvents() { 
+            if (inkEvents == null) Debug.LogError("InkEvents is null");
+
+            // Hook up the events so they show up in the inspector
+            UnityEventTools.AddPersistentListener(inkEvents.StoryUpdate, StoryUpdate);
+            UnityEventTools.AddPersistentListener(inkEvents.StoryEnded, HideAllSpeechBubbles);
+
+            var watcher = inkEvents.GetOrAddTagChangeWatcher(InkTagState.StartsWith, "said:"); 
+            if (watcher == null) Debug.LogError("'Said' watcher is null");  
+            UnityEventTools.AddPersistentListener(watcher.tagEvent, SetSpeaker);
         }
 
         void Start() {
             HideAllSpeechBubbles();
-            ink.AddTagListener("said", SetSpeaker);
-            ink.storyUpdate.AddListener(StoryUpdate);
-            ink.storyEnded.AddListener(HideAllSpeechBubbles);
             ink.Initialize();
             SetSpeaker(speaker?.name ?? ink.story.variablesState["lastKnownSpeaker"] as string ?? "None");
             ink.BeginStory();

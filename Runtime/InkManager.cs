@@ -9,9 +9,12 @@ namespace Ballpoint {
 
 	[DisallowMultipleComponent]
 	[HelpURL(HelpURL + "#ink-manager")]
+	[AddComponentMenu("Ballpoint/Ink Manager")]
 	public class InkManager : MonoBehaviour {
 
 		public const string HelpURL = "https://github.com/lunarcloud/ballpoint-unity/tree/master/Documentation~/Ballpoint.md";
+
+		private InkEventDispatcher eventDispatcher;
 
 		[SerializeField]
 		public TextAsset InkJsonAsset;
@@ -31,41 +34,36 @@ namespace Ballpoint {
 		[Tooltip("Unless debug state is set.")]
 		public bool loadSaveFileOnStart = false;
 
-		public bool skipInitialBlankLine = true;
+		[Tooltip("Process tags and auto-continue if initial line has no text.")]
+		public bool AutoSkipInitialBlankLine = true;
 
-		[Header("Processing")]
-
-		[Tooltip("Not including empty text with choices")]
-		public bool skipBlankLines = true;
-		public bool _skipBlankLines; // actually used
-
-		public UnityEvent storyInitialized;
-
-		[SerializeField]
-		public UnityEvent<StoryUpdate> storyUpdate;
-
-		[SerializeField]
-		public UnityEvent storyEnded;
-
-		[Header("Tags Handling")]
-		[SerializeField]
-		public char tagValueSplitter = ':';
-
-		[SerializeField]
-		public List<TagEventWatcher> tagEvents = new List<TagEventWatcher>();
-
-		[Header("Variable Observation")]
-
-		[SerializeField]
-		public List<InkVariableWatcher> variableChangedEvents = new List<InkVariableWatcher>();
+		[Tooltip("Process tags and auto-continue for empty text without choices.")]
+		public bool AutoSkipBlankLines = true;
+		protected bool _AutoSkipBlankLines; // actually used
+		
 		public StoryUpdate lastStoryUpdate { get; private set; }
 
 		public string State {
 			get => this.story.state.ToJson();
 			set => this.story.state.LoadJson(value);
 		}
+		
+		public static InkManager FindAny()
+		{
+				var maybeInkManager = FindObjectsOfType<InkManager>();
+				if (maybeInkManager.Length > 1) {
+					Debug.LogWarning("Multiple Ink Managers found in scene, using first found");
+				} else if (maybeInkManager.Length < 1) {
+					Debug.LogError("Ink Manager could not be found in the scene!");
+					return null;
+				}
+				
+				return maybeInkManager[0];
+		}
 
 		private void Awake() {
+			eventDispatcher = eventDispatcher ?? InkEventDispatcher.FindAny();
+
 			// Application.persistentDataPath is not available at compile-time, must assign this here
 			standardSavePath = $"{Application.persistentDataPath}/save.json";
 		}
@@ -85,29 +83,30 @@ namespace Ballpoint {
 
 		public void Initialize() {
 			story = new Story(InkJsonAsset.text);
-			variableChangedEvents.ForEach(watcher => story.ObserveVariable(watcher.name, (k, v) => watcher.Invoke(v)));
-
+			eventDispatcher?.InitializeVariableObservation();
+			
 			// Load a state or standard save (if configured to)
 			if (debugState != null) LoadDebugState();
 			else if (loadSaveFileOnStart) TryLoad();
 
-			storyInitialized?.Invoke();
+			eventDispatcher?.StoryReady?.Invoke();
 		}
 
 		public void LoadDebugState() => State = debugState.text;
 
 		public void BeginStory() {
 			// Send out Variable initial values
-			variableChangedEvents.ForEach(watcher => watcher.Invoke(story.variablesState[watcher.name]));
-			// Skip the first line if blank (if configured to)
-			_skipBlankLines = skipInitialBlankLine;
+			eventDispatcher?.InvokeInitialVariableObservationValues();
+			
+			// AutoSkip the first line if blank (if configured to)
+			_AutoSkipBlankLines = AutoSkipInitialBlankLine;
 			Continue();
-			_skipBlankLines = skipBlankLines;
+			_AutoSkipBlankLines = AutoSkipBlankLines;
 		}
 
 		public void Continue() {
 			if (IsAtEnd()) {
-				storyEnded?.Invoke();
+				eventDispatcher?.StoryEnded?.Invoke();
 				return;
 			}
 			if (!story.canContinue) return;
@@ -115,14 +114,14 @@ namespace Ballpoint {
 			do {
 				story.Continue();
 				SendStoryUpdate();
-			} while (_skipBlankLines && IsBlankLineWithoutChoices() && !IsAtEnd());
+			} while (_AutoSkipBlankLines && IsBlankLineWithoutChoices() && !IsAtEnd());
 		}
 		private void SendStoryUpdate() {
 			var text = story.currentText.Trim();
-			var tags = ProcessTags(story.currentTags);
 			var choices = story.currentChoices.Select(c => c.text).ToList<string>();
-			lastStoryUpdate = new StoryUpdate(text, choices, tags, IsAtEnd());
-			storyUpdate?.Invoke(lastStoryUpdate);
+			eventDispatcher?.ProcessTags(story.currentTags); // Process Tags first, then send story update
+			lastStoryUpdate = new StoryUpdate(text, choices, story.currentTags, IsAtEnd());
+			eventDispatcher?.StoryUpdate?.Invoke(lastStoryUpdate);
 		}
 
 		public void Continue(int choiceIndex) {
@@ -133,53 +132,6 @@ namespace Ballpoint {
 		private bool IsBlankLineWithoutChoices() => story.currentText.Trim() == string.Empty && story.currentChoices.Count == 0;
 
 		public bool IsAtEnd() => this.story.currentChoices.Count == 0 && !this.story.canContinue;
-
-		public Dictionary<string, string> ProcessTags(List<string> tags) {
-			var tagMap = new Dictionary<string, string>();
-			if (tags != null)
-				foreach (string tag in tags) {
-					var split = tag.Split(tagValueSplitter);
-					var key = split.Length > 0 ? split[0] : tag;
-					var value = split.Length > 1 ? split[1] : key;
-					tagMap.Add(key, value);
-					// Trigger Event
-					var inkTagProcessor = tagEvents?.Find(o => o.name == key);
-					inkTagProcessor?.Invoke(value);
-				}
-			return tagMap;
-		}
-
-		// Tag Event functions
-		internal TagEventWatcher GetOrAddTagChangeWatcher(string name) {
-			tagEvents = tagEvents ?? new List<TagEventWatcher>();
-			var watcher = tagEvents.Find(o => o.name == name);
-			if (watcher == null) {
-				watcher = new TagEventWatcher(name);
-				tagEvents.Add(watcher);
-			}
-			return watcher;
-		}
-
-		public void AddTagListener(string key, UnityAction<string> call) => GetOrAddTagChangeWatcher(key).tagEvent.AddListener(call);
-
-		public void RemoveTagListener(string key, UnityAction<string> call) => GetOrAddTagChangeWatcher(key).tagEvent.RemoveListener(call);
-
-		// Variable Event functions
-		public InkVariableWatcher GetOrAddInkVariableWatcher(string name, HandleTypeEnum types) {
-			variableChangedEvents = variableChangedEvents ?? new List<InkVariableWatcher>();
-			var watcher = variableChangedEvents.Find(o => o.name == name);
-			if (watcher == null) {
-				watcher = new InkVariableWatcher(name, types);
-				variableChangedEvents.Add(watcher);
-				if (story) {
-					// Setup actual watcher with ink
-					story.ObserveVariable(name, (k, v) => watcher.Invoke(v));
-					watcher.Invoke(story.variablesState[name]);
-				}
-			} else {
-				watcher.handleAsType |= types; // ensure it's acquired with the ability to use the types desired
-			}
-			return watcher;
-		}
 	}
+
 }

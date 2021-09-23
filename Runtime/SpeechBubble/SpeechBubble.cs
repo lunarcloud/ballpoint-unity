@@ -6,6 +6,7 @@ namespace Ballpoint.SpeechBubble {
 
     [DisallowMultipleComponent]
     [HelpURL(SpeechBubbleManager.HelpURL)]
+	[AddComponentMenu("Ballpoint/Speech Bubble/Bubble")]
     public abstract class SpeechBubble : MonoBehaviour {
 
         [SerializeField]

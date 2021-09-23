@@ -5,6 +5,7 @@ namespace Ballpoint.SpeechBubble {
 
     [DisallowMultipleComponent]
     [HelpURL(SpeechBubbleManager.HelpURL)]
+	[AddComponentMenu("Ballpoint/Speech Bubble/Talkable")]
     public class Talkable : MonoBehaviour {
         public SpeechBubble speechBubble;
 

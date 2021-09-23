@@ -3,17 +3,21 @@ using System.Linq;
 using Ink.Runtime;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEditor.Events;
 
 namespace Ballpoint.Inventory {
 
-    [RequireComponent(typeof(InkManager))]
+    [RequireComponent(typeof(InkEventDispatcher))]
     [DisallowMultipleComponent]
     [HelpURL(HelpURL)]
+	[AddComponentMenu("Ballpoint/Inventory Manager")]
     public class InventoryManager : MonoBehaviour {
 
         public const string HelpURL = InkManager.HelpURL + "#inventory-manager";
 
         private InkManager ink;
+        private InkEventDispatcher inkEvents;
+        
         public string inkListName = "inventory";
 
         public string inkCombineFunctionName = "combine";
@@ -31,14 +35,35 @@ namespace Ballpoint.Inventory {
         private bool hasCombineFunction = false;
         private bool hasPickupFunction = false;
         private bool inventoryItemsSetup = false;
+        
+        [SerializeField]
+        [HideInInspector]
+        private bool _InitiallyWiredEvents = false;
 
         private void OnValidate() {
-            ink = ink ?? GetComponent<InkManager>();
-            var watcher = ink.GetOrAddInkVariableWatcher(inkListName, HandleTypeEnum.List);
-            watcher.changedAsList.AddListener(OnInventoryChanged);
+            ink = ink ?? InkManager.FindAny();
+            inkEvents = inkEvents ?? InkEventDispatcher.FindAny();
+            
+            if (_InitiallyWiredEvents == false) {
+                _InitiallyWiredEvents = true;
+                WireEvents();
+            }
+        }
+        
+        
+		[ContextMenu("Re-Add Events to Dispatcher")] 
+        private void WireEvents() { 
+            if (inkEvents == null) Debug.LogError("InkEvents is null");
+
+            // Hook up the events so they show up in the inspector            
+            var watcher = inkEvents.GetOrAddInkVariableWatcher(inkListName, HandleTypeEnum.List);
+
+            if (watcher == null) Debug.LogError($"'{inkListName}' watcher is null");
+            
+            UnityEventTools.AddPersistentListener(watcher.changedAsList, OnInventoryChanged);
         }
 
-        private void OnInventoryChanged(Ink.Runtime.InkList newList) {
+        public void OnInventoryChanged(Ink.Runtime.InkList newList) {
             SetupInventoryItems(newList.all);
             list = newList;
             if (logInventoryChanges) Debug.Log($"Inventory update: {newList}");

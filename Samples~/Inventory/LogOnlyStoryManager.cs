@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEditor.Events;
 
 namespace Ballpoint.Sample.Inventory {
 
@@ -8,18 +9,36 @@ namespace Ballpoint.Sample.Inventory {
     [HelpURL(InkManager.HelpURL)]
     public class LogOnlyStoryManager : MonoBehaviour {
         private InkManager ink;
+        private InkEventDispatcher inkEvents;
 
         public bool autoContinue = true;
+        
+        [SerializeField]
+        [HideInInspector]
+        private bool _InitiallyWiredEvents = false;
+        
+        private void OnValidate() {
+            ink = ink ?? InkManager.FindAny();
+            inkEvents = inkEvents ?? InkEventDispatcher.FindAny();
 
-        private void OnValidate() => ink = ink ?? GetComponent<InkManager>();
+            // Hook up the events so they show up in the inspector
+            if (_InitiallyWiredEvents == false) {
+                _InitiallyWiredEvents = true;
+                WireEvents();
+            }
+        }
+        
+		[ContextMenu("Re-Add Events to Dispatcher")] 
+        private void WireEvents() {       
+            UnityEventTools.AddPersistentListener(inkEvents.StoryUpdate, StoryUpdate);
+        }
 
         void Start() {
-            ink.storyUpdate.AddListener(StoryUpdate);
             ink.Initialize();
             ink.BeginStory();
         }
 
-        private void StoryUpdate(StoryUpdate update) {
+        public void StoryUpdate(StoryUpdate update) {
             Debug.Log(update);
             StartCoroutine(AutoContinue(update));
         }
